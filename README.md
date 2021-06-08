@@ -6,9 +6,9 @@ HELM charts to assist with IBM Spectrum Scale container native and CSI installat
 
 HELM charts for IBM Spectrum Scale container native and CSI are meant to assist with installation but are not a formally supported offering. These are not supported by the IBM Spectrum Scale container native nor CSI offerings and are outside the scope of the IBM PMR process. For supported methods of installation, please refer to the IBM Documentation for each product:
 
-[IBM Spectrum Scale CSI documentation] (https://www.ibm.com/docs/en/spectrum-scale-csi)
+[IBM Spectrum Scale CSI documentation](https://www.ibm.com/docs/en/spectrum-scale-csi)
 
-[IBM Spectrum Scale container native documentation]  (https://www.ibm.com/docs/en/scalecontainernative)
+[IBM Spectrum Scale container native documentation](https://www.ibm.com/docs/en/scalecontainernative)
 
 
 ## Report Bugs 

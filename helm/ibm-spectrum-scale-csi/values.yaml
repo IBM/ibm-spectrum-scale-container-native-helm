@@ -1,6 +1,6 @@
 # -----------------------------------------------------------------------
 # Default Helm chart values for 
-# IBM Spectrum Scale CSI driver v2.1.0
+# IBM Spectrum Scale CSI driver v2.2.0
 # -----------------------------------------------------------------------
 # DISCLAIMER:
 # These Helm charts are only intended to provide ease of use for an 
@@ -52,8 +52,6 @@
 
 # OPTIONAL: namespace: csiNamespace to depoy CSI. If undefined ("") the release namespace of the Helm chart will be used as default for CSI
 csiNamespace:          ""
-# REQUIRED: scaleHostpath: Mount path of the primary file system (primaryFs) on the local IBM Spectrum Scale API host
-scaleHostpath:         "/mnt/fs1"
 
 ## -----------------------------------------------------------
 ##  IBM Spectrum Scale CSI: Primary File System Configuration
@@ -105,6 +103,7 @@ addlRemoteClusters:
 ## -----------------------------------------------------
 ##  IBM Spectrum Scale CSI: Node Selector Configuration
 ## -----------------------------------------------------
+# https://www.ibm.com/docs/en/spectrum-scale-csi?topic=operator-using-node-selector
 
 # The IBM Spectrum Scale CSI Operator will check that a node has all the labels defined below in order to deploy IBM Spectrum Scale CSI pods on this node.
 # REQUIRED: csiNodeSelectorBase "scale: true" is the default node label for deploying Spectrum Scale CSI pods on a node (DEFAULT / leave as is)
@@ -121,6 +120,12 @@ csiNodeSelectorProvisioner:
 # on a specifc subset of CSI nodes (highly reliable OpenShift infrastructure nodes), e.g. key: "infranode", value: "2"
 # Set only if required. Otherwise set key: "" to be ignored.
 csiNodeSelectorAttacher:
+  key:    ""
+  value:  ""
+# OPTIONAL: csiNodeSelectorSnapshotter is an additional node label to run the IBM Spectrum Scale CSI Snapshotter pods
+# on a specifc subset of CSI nodes (highly reliable OpenShift infrastructure nodes), e.g. key: "infranode", value: "3"
+# Set only if required. Otherwise set key: "" to be ignored.
+csiNodeSelectorSnapshotter:
   key:    ""
   value:  ""
 
@@ -143,6 +148,24 @@ csiTolerations:
 #    effect: "NoExecute"
 #    tolerationSeconds: 3600
 
+## --------------------------------------
+##  IBM Spectrum Scale CSI: Node Mapping
+## --------------------------------------
+# https://www.ibm.com/docs/en/spectrum-scale-csi?topic=operator-kubernetes-spectrum-scale-node-mapping
+
+# OPTIONAL: csiNodeMapping is an array of node mappings in case K8s node names (oc get nodes) differ from SpectrumScale node names (mmlscluster)
+# In case a K8s node name starts with a number (e.g. "198.51.100.10") then use "K8sNodePrefix_< K8s Node Name >" 
+# as format for the k8sNode name (e.g. "K8sNodePrefix_198.51.100.10")
+csiNodeMapping:
+#  - k8sNode: "< K8s Node Name >"
+#    spectrumscaleNode: "< SpectrumScale Node Name >"
+#  - k8sNode: "< K8s Node Name >"
+#    spectrumscaleNode: "< SpectrumScale Node Name >"
+#  - k8sNode: "K8sNodePrefix_< K8s Node Name >"
+#    spectrumscaleNode: "< SpectrumScale Node Name >"
+#  - k8sNode: "K8sNodePrefix_< K8s Node Name >"
+#    spectrumscaleNode: "< SpectrumScale Node Name >"
+
 ##########################################################
 ## IBM SPECTRUM SCALE CSI PACKAGE DEFAULT CONFIGURATION ##
 ##########################################################
@@ -150,13 +173,21 @@ csiTolerations:
 ## ----------------------------------------
 ##  IBM Spectrum Scale CSI Product Version
 ## ----------------------------------------
-csiProductVersion: 2.1.0
+csiProductVersion: 2.2.0
+
+## ----------------------------------------------------
+##  IBM Spectrum Scale CSI Kubelet root directory path
+## ----------------------------------------------------
+
+# OPTIONAL: csiKubeletRootDirPath is the Kubelet root directory path, in case we don't want to use the default kubelet root directory path
+# Default values are used if set to "" ("/var/lib/kubelet"). 
+csiKubeletRootDirPath: ""
 
 ## -----------------------------------------------
 ##  IBM Spectrum Scale CSI Image Registry Secrets
 ## -----------------------------------------------
 
-# OPTIONAL: csiImagePullSecrets is a list of imagePullSecrets that may be required for accessing an external image registry to pull images, e.g. created with: 
+# OPTIONAL: csiImagePullSecrets is a list of imagePullSecrets names that may be required for accessing an external image registry to pull images, e.g. created with: 
 # kubectl create secret docker-registry [name] -n [namespace] --docker-server=[registry] --docker-username=[name] --docker-password=[password/token] --docker-email=[email]
 # See https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 csiImagePullSecrets:
@@ -171,38 +202,45 @@ csiImagePullSecrets:
 
 csiOperator:
   image:
-    # Scale CSI Operator image name (including full image registry path) and tag, e.g. "quay.io/ibm-spectrum-scale/ibm-spectrum-scale-csi-operator:v2.1.0"
+    # Scale CSI Operator image name (including full image registry path) and tag, e.g. "quay.io/ibm-spectrum-scale/ibm-spectrum-scale-csi-operator:v2.2.0"
     # If tag is set to tag: "" it defaults to the chart appVersion defined in Chart.yaml.
     name: "quay.io/ibm-spectrum-scale/ibm-spectrum-scale-csi-operator"
     tag:  ""
 
 csiDriver:
   image:
-    # Scale CSI Driver image name (including full image registry path) and tag, e.g. "quay.io/ibm-spectrum-scale/ibm-spectrum-scale-csi-driver:v2.1.0"
-    # If tag is set to tag: "" it defaults to the chart appVersion defined in Chart.yaml.
-    name: "quay.io/ibm-spectrum-scale/ibm-spectrum-scale-csi-driver"
-    tag:  ""
+    # Scale CSI Driver image name (including full image registry path) and tag in case we do need to override the default image,
+    # e.g. "quay.io/ibm-spectrum-scale/ibm-spectrum-scale-csi-driver:v2.2.0". Default values are used if name is set to "". 
+    name: ""
+    tag:  "v2.2.0"
 
 csiAttacher:
   image:
-    # Attacher image name (including full image registry path) and tag in case we do need to override the default image (required for System p and System z),
-    # e.g. "us.gcr.io/k8s-artifacts-prod/sig-storage/csi-attacher:v3.0.0". Default values are used if name is set to name: "". 
+    # Attacher image name (including full image registry path) and tag in case we do need to override the default image,
+    # e.g. "us.gcr.io/k8s-artifacts-prod/sig-storage/csi-attacher:v3.1.0". Default values are used if name is set to "". 
     name: ""
-    tag:  "v3.0.0"
+    tag:  "v3.1.0"
 
 csiProvisioner:
   image:
-    # Provisioner image name (including full image registry path) and tag in case we do need to override the default image (required for System p and System z),
-    # e.g. "us.gcr.io/k8s-artifacts-prod/sig-storage/csi-provisioner:v2.0.2". Default values are used if name is set to name: "".
+    # Provisioner image name (including full image registry path) and tag in case we do need to override the default image,
+    # e.g. "us.gcr.io/k8s-artifacts-prod/sig-storage/csi-provisioner:v2.1.0". Default values are used if name is set to "".
     name: ""
-    tag:  "v2.0.2"
+    tag:  "v2.1.0"
 
 csiDriverRegistrar:
   image:
-    # Driver Registrar image name (including full image registry path) and tag in case we do need to override the default image (required for System p and System z),
-    # e.g. "us.gcr.io/k8s-artifacts-prod/sig-storage/csi-node-driver-registrar:v2.0.1". Default values are used if name is set to name: "".
+    # Driver Registrar image name (including full image registry path) and tag in case we do need to override the default image,
+    # e.g. "us.gcr.io/k8s-artifacts-prod/sig-storage/csi-node-driver-registrar:v2.1.0". Default values are used if name is set to "".
     name: ""
-    tag:  "v2.0.1"
+    tag:  "v2.1.0"
+
+csiSnapshotter:
+  image:
+    # Snapshotter image name (including full image registry path) and tag in case we do need to override the default image,
+    # e.g. "us.gcr.io/k8s-artifacts-prod/sig-storage/csi-snapshotter:v4.0.0". Default values are used if name is set to "".
+    name: ""
+    tag:  "v4.0.0"
 
 ## -------------------------------------------------------------------------
 ##  IBM Spectrum Scale CNSA Variables for combinded deployment (CNSA & CSI)

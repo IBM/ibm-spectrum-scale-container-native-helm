@@ -18,7 +18,7 @@ This Helm chart does not provide support for any lifecycle management of this ap
 especially, "helm upgrade|rollback|uninstall" features are not supported.
 
 To remove IBM Spectrum Scale CSI driver please follow instructions at:
-https://www.ibm.com/docs/en/spectrum-scale-csi?topic=installation-cleaning-up-spectrum-scale-container-storage-interface-driver-operator-by-using-clis
+https://www.ibm.com/docs/en/spectrum-scale-csi?topic=cleanup-cleaning-up-spectrum-scale-container-storage-interface-driver-operator-by-using-clis
 
 The Helm chart and OpenShift resources of this deployment can be removed using:
 # oc delete csiscaleoperator ibm-spectrum-scale-csi -n {{ .Release.Namespace }}
@@ -27,4 +27,4 @@ The Helm chart and OpenShift resources of this deployment can be removed using:
 # oc delete project {{ .Release.Namespace }}
 
 For more information please refer to the IBM Documentation at
-https://www.ibm.com/docs/en/spectrum-scale-csi?topic=spectrum-scale-container-storage-interface-driver-210
+https://www.ibm.com/docs/en/spectrum-scale-csi?topic=spectrum-scale-container-storage-interface-driver-220

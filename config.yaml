@@ -1,7 +1,7 @@
 # ----------------------------------------------------------------------
 # Helm chart values for combined IBM Spectrum Scale CNSA/CSI Deployment
 # ----------------------------------------------------------------------
-# IBM Spectrum Scale CNSA 5.1.0.3 / CSI 2.1.0 release 
+# IBM Spectrum Scale CNSA 5.1.0.3 / CSI 2.2.0 release 
 # ----------------------------------------------------------------------
 # DISCLAIMER:
 # These Helm charts are only intended to provide ease of use for an 
@@ -216,3 +216,21 @@ csiTolerations:
 #    value: "value1"
 #    effect: "NoExecute"
 #    tolerationSeconds: 3600
+
+## --------------------------------------
+##  IBM Spectrum Scale CSI: Node Mapping
+## --------------------------------------
+# https://www.ibm.com/docs/en/spectrum-scale-csi?topic=operator-kubernetes-spectrum-scale-node-mapping
+
+# OPTIONAL: csiNodeMapping is an array of node mappings in case K8s node names (oc get nodes) differ from SpectrumScale node names (mmlscluster)
+# In case a K8s node name starts with a number (e.g. "198.51.100.10") then use "K8sNodePrefix_< K8s Node Name >" 
+# as format for the k8sNode name (e.g. "K8sNodePrefix_198.51.100.10")
+csiNodeMapping:
+#  - k8sNode: "< K8s Node Name >"
+#    spectrumscaleNode: "< SpectrumScale Node Name >"
+#  - k8sNode: "< K8s Node Name >"
+#    spectrumscaleNode: "< SpectrumScale Node Name >"
+#  - k8sNode: "K8sNodePrefix_< K8s Node Name >"
+#    spectrumscaleNode: "< SpectrumScale Node Name >"
+#  - k8sNode: "K8sNodePrefix_< K8s Node Name >"
+#    spectrumscaleNode: "< SpectrumScale Node Name >"

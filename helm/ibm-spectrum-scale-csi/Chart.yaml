@@ -1,10 +1,10 @@
 apiVersion: v2
 name: ibm-spectrum-scale-csi
 type: application
-version: 1.0.1
-appVersion: v2.1.0
+version: 1.0.2
+appVersion: v2.2.0
 description: IBM Spectrum Scale CSI driver for IBM Spectrum Scale CNSA on Red Hat OpenShift
-home: https://www.ibm.com/docs/en/spectrum-scale-csi?topic=spectrum-scale-container-storage-interface-driver-210
+home: https://www.ibm.com/docs/en/spectrum-scale-csi?topic=spectrum-scale-container-storage-interface-driver-220
 icon: https://www.ibm.com/cloud-computing/scalable-icon.svg
 sources: 
   - https://github.com/IBM/ibm-spectrum-scale-container-native-helm

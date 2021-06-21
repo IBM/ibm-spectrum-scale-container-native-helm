@@ -33,13 +33,15 @@
   - Specify node selectors for IBM Spectrum Scale CNSA (optional)
   - Specify node labels for IBM Spectrum Scale CSI driver (optional)
   - Specify pod tolerations for IBM Spectrum Scale CSI driver (optional)
+  - Specify node mapping for IBM Spectrum Scale CSI driver (optional)
+
 
 ## Abstract
 
 This document describes the combined deployment of
 
 - [*IBM Spectrum Scale Container Native Storage Access* (CNSA) v5.1.0.3](https://www.ibm.com/docs/en/scalecontainernative?topic=spectrum-scale-container-native-storage-access-5103) and 
-- [*IBM Spectrum Scale CSI driver* v2.1.0](https://www.ibm.com/docs/en/spectrum-scale-csi?topic=spectrum-scale-container-storage-interface-driver-210) 
+- [*IBM Spectrum Scale CSI driver* v2.2.0](https://www.ibm.com/docs/en/spectrum-scale-csi?topic=spectrum-scale-container-storage-interface-driver-220) 
 
 using *two* Helm charts with a *single* configuration file ([*config.yaml*](config.yaml)).
 
@@ -69,7 +71,7 @@ using a remote mount of an IBM Spectrum Scale file system.
 
 To install 
 [*IBM Spectrum Scale CNSA*](https://www.ibm.com/docs/en/scalecontainernative?topic=spectrum-scale-container-native-storage-access-5103) and 
-[*IBM Spectrum Scale CSI driver*](https://www.ibm.com/docs/en/spectrum-scale-csi?topic=spectrum-scale-container-storage-interface-driver-210) 
+[*IBM Spectrum Scale CSI driver*](https://www.ibm.com/docs/en/spectrum-scale-csi?topic=spectrum-scale-container-storage-interface-driver-220) 
 with these Helm charts on Red Hat OpenShift 4.5 (or higher) the following requirements need to be met together
 with the regular pre-requisites for IBM Spectrum Scale CNSA and CSI driver as described in their respective IBM Documentation:
 
@@ -138,7 +140,7 @@ which will not be templated by Helm.
 
 The **Chart.yaml** file describes the general properties of the Helm chart such as the Helm chart name, the *Helm chart version* and the *appVersion*.
 The *appVersion* is used as the *default tag* for the images in the Helm chart if no other tag is explicitely defined for the container images in `values.yaml`,e.g.
-**appVersion** is *v5.1.0.3* for IBM Spectrum Scale CNSA v5.1.0.3 and *v2.1.0* for IBM Spectrum Scale CSI driver v2.1.0. 
+**appVersion** is *v5.1.0.3* for IBM Spectrum Scale CNSA v5.1.0.3 and *v2.2.0* for IBM Spectrum Scale CSI driver v2.2.0. 
 
 
 ## Preinstallation tasks
@@ -732,7 +734,7 @@ You can now switch to the *ibm-spectrum-scale-csi-driver* namespace for convenie
 
 # helm list
 NAME                    NAMESPACE                       REVISION  UPDATED                                   STATUS    CHART                         APP VERSION
-ibm-spectrum-scale-csi  ibm-spectrum-scale-csi-driver   1         2021-04-14 23:27:40.677408242 +0200 CEST  deployed  ibm-spectrum-scale-csi-1.0.1  v2.1.0     
+ibm-spectrum-scale-csi  ibm-spectrum-scale-csi-driver   1         2021-04-14 23:27:40.677408242 +0200 CEST  deployed  ibm-spectrum-scale-csi-1.0.2  v2.2.0     
 ```
 Wait until all pods of the IBM Spectrum Scale CSI driver are running:
 ```
@@ -1108,3 +1110,24 @@ csiTolerations:
     tolerationSeconds: 3600
 ```
 See [Taints and Tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for more information.
+
+### Specify node mappings for IBM Spectrum Scale CSI (optional)
+
+If OpenShift/Kubernetes node names differ from the IBM Spectrum Scale node names you can need to configure a node name mapping of the OpenShift/Kubernetes node names
+to the respective IBM Spectrum Scale node names which you can specify in the [config.yaml](config.yaml) file as follows:
+```
+# OPTIONAL: csiNodeMapping is an array of node mappings in case K8s node names (oc get nodes) differ from SpectrumScale node names (mmlscluster)
+# In case a K8s node name starts with a number (e.g. "198.51.100.10") then use "K8sNodePrefix_< K8s Node Name >" 
+# as format for the k8sNode name (e.g. "K8sNodePrefix_198.51.100.10")
+csiNodeMapping:
+  - k8sNode: "< K8s Node Name >"
+    spectrumscaleNode: "< SpectrumScale Node Name >"
+  - k8sNode: "< K8s Node Name >"
+    spectrumscaleNode: "< SpectrumScale Node Name >"
+  - k8sNode: "K8sNodePrefix_< K8s Node Name >"
+    spectrumscaleNode: "< SpectrumScale Node Name >"
+  - k8sNode: "K8sNodePrefix_< K8s Node Name >"
+    spectrumscaleNode: "< SpectrumScale Node Name >"
+```
+See [*Kubernetes to IBM Spectrum Scale node mapping*](https://www.ibm.com/docs/en/spectrum-scale-csi?topic=operator-kubernetes-spectrum-scale-node-mapping)
+for more information.

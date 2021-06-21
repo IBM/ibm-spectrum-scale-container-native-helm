@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    helm.sh/chart: {{ include "ibm-spectrum-scale.chart" . }}
+  name: ibm-spectrum-scale-core-profile
+data:
+  profile: |
+    %cluster:
+      pagepool={{ .Values.profile.pagepool }}
+      ignorePrefetchLUNCount={{ .Values.profile.ignorePrefetchLUNCount }}
+      workerThreads={{ .Values.profile.workerThreads }}
+      maxFilesToCache={{ .Values.profile.maxFilesToCache }}
+      maxStatCache={{ .Values.profile.maxStatCache }}
+      maxblocksize={{ .Values.profile.maxblocksize }}
+
+      # Prefetch Tunings
+      initPrefetchBuffers={{ .Values.profile.initPrefetchBuffers }}
+      prefetchTimeout={{ .Values.profile.prefetchTimeout }}
+      prefetchPct={{ .Values.profile.prefetchPct }}
+      prefetchMaxBuffersPerInstance={{ .Values.profile.prefetchMaxBuffersPerInstance }}
+      controlSetxattrImmutableSELinux={{ .Values.profile.controlSetxattrImmutableSELinux }}
+      enforceFilesetQuotaOnRoot={{ .Values.profile.enforceFilesetQuotaOnRoot }}

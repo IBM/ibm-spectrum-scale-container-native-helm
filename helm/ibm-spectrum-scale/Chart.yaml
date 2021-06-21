@@ -1,0 +1,13 @@
+apiVersion: v2
+name: ibm-spectrum-scale
+type: application
+version: 1.0.1
+appVersion: v5.1.0.3
+description: IBM Spectrum Scale Container Native Storage Access on Red Hat OpenShift
+home: https://www.ibm.com/docs/en/scalecontainernative?topic=spectrum-scale-container-native-storage-access-5103
+icon: https://www.ibm.com/cloud-computing/scalable-icon.svg
+sources: 
+  - https://github.com/IBM/ibm-spectrum-scale-container-native-helm
+maintainers:
+  - name: Gero Schmidt
+    email: gerosch@de.ibm.com

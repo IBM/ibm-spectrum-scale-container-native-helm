@@ -1,0 +1,9 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ibm-spectrum-scale-sc
+provisioner: spectrumscale.csi.ibm.com
+parameters:
+  volBackendFs: "<filesystem name on local CNSA cluster>"
+  clusterId: "<cluster ID of remote storage cluster>"
+reclaimPolicy: Delete

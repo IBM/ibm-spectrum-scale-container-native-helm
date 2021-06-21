@@ -1,0 +1,76 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    helm.sh/chart: {{ include "ibm-spectrum-scale.chart" . }}
+    app.kubernetes.io/instance: ibm-spectrum-scale-core-operator
+    app.kubernetes.io/managed-by: ibm-spectrum-scale-core-operator
+    app.kubernetes.io/name: ibm-spectrum-scale-core-operator
+    product: ibm-spectrum-scale-core
+    release: ibm-spectrum-scale-core-operator
+  name: ibm-spectrum-scale-operator
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+      - services
+      - events
+    verbs:
+      - get
+      - list
+      - create
+      - patch
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumes
+      - persistentvolumes/finalizers
+      - persistentvolumeclaims
+    verbs:
+      - get
+      - list
+      - create
+      - patch
+      - delete
+  - apiGroups:
+      - apps
+    resources:
+      - statefulsets
+    verbs:
+      - get
+  - apiGroups:
+      - security.openshift.io
+    resources:
+      - securitycontextconstraints
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - storageclasses
+    verbs:
+      - get
+      - list
+      - patch
+      - create
+  - apiGroups:
+      - rbac.authorization.k8s.io
+    resources:
+      - clusterroles
+      - clusterrolebindings
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete

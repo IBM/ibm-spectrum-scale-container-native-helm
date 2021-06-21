@@ -1,0 +1,37 @@
+------------------------------------------------------------------------
+IBM Spectrum Scale Container Native Storage Access {{ .Chart.AppVersion }} for OpenShift
+------------------------------------------------------------------------
+
+IBM Spectrum Scale Container Native Storage Access "{{ .Chart.AppVersion }}" was deployed as 
+"{{ .Release.Name }}-{{ .Chart.Version }}" release in namespace "{{ .Release.Namespace }}".
+
+Verify that all pods are in a running state. You can watch the pod status by using:
+# oc get pods -n {{ .Release.Namespace }} -w
+
+This Helm chart is only intended to provide ease of use for an initial deployment (helm install) 
+of this application for Proof of Concepts (PoCs), demos or any other form of evaluations 
+where no further lifecycle managment and upgrade paths are considered. 
+
+They are explicitely not intended and not supported for any production use! 
+
+This Helm chart does not provide support for any lifecycle management of this application,
+especially, "helm upgrade|rollback|uninstall" features are not supported.
+
+To remove IBM Spectrum Scale Container Native Storage Access please follow instructions at:
+https://www.ibm.com/docs/en/scalecontainernative?topic=5103-cleanup
+
+The Helm chart and OpenShift resources of this deployment can be removed using:
+# oc delete scalecluster ibm-spectrum-scale -n {{ .Release.Namespace }}
+# helm uninstall {{ .Release.Name }} -n {{ .Release.Namespace }}
+# oc delete crd scaleclusters.scale.ibm.com
+# oc delete scc ibm-spectrum-scale-privileged
+# oc delete pvc -l app=scale-pmcollector -n {{ .Release.Namespace }}
+# oc delete pv -l app=scale-pmcollector
+# oc delete sc -l app=scale-pmcollector
+Note: Only delete the project {{ .Release.Namespace }} and following resources if you have no intention to redeploy IBM Spectrum Scale CNSA.
+# oc delete project {{ .Release.Namespace }}
+# oc debug node/<openshift_spectrum-scale_worker_node> -T -- chroot /host sh -c "rm -rf /var/mmfs; rm -rf /var/adm/ras"
+# oc get nodes -ojsonpath="{range .items[*]}{.metadata.name}{'\n'}" | xargs -I{} oc annotate node {} scale.ibm.com/nodedesc-
+
+For more information please refer to the IBM Knowledge Center at
+https://www.ibm.com/docs/en/scalecontainernative?topic=spectrum-scale-container-native-storage-access-5103

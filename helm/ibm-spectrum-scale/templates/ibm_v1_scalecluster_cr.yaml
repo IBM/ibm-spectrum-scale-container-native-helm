@@ -1,0 +1,92 @@
+# NOTE: Applying changes to the CR after the cluster has been created will
+# not trigger an update of the running pods. To update a pod that is
+# currently running, the pod will need to be manually deleted. When the pod is
+# recreated, the updates will be applied.
+apiVersion: scale.ibm.com/v1
+kind: ScaleCluster
+metadata:
+  name: ibm-spectrum-scale
+  labels:
+    helm.sh/chart: {{ include "ibm-spectrum-scale.chart" . }}
+spec:
+  # -------------------------------------------------------------------------------
+  # nodeSelector is a User Configurable field.
+  # -------------------------------------------------------------------------------
+  # In conjunction with the nodeSelector configuration, the operator also
+  # applies node affinity according to supported architectures and OS.
+  # More info on node selectors:
+  #       https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
+  # note: changing this field after first deployment may require manual pod deletions.
+  # Deploy pods on nodes matching the following node labels:
+  nodeSelector:
+    {{- toYaml .Values.nodeSelector | nindent 4 }}
+
+  # -------------------------------------------------------------------------------
+  # images is the list of Docker container images required to deploy and run IBM Spectrum Scale
+  # -------------------------------------------------------------------------------
+  # note: changing the following fields after first deployment will require manual pod deletions.
+  images:
+    core: {{ .Values.imageRegistry }}/{{ .Values.imageRegistryNamespace | default .Release.Namespace }}/{{ .Values.core.image.name }}:{{ .Values.core.image.tag | default .Chart.AppVersion }}
+    coreInit: {{ .Values.imageRegistry }}/{{ .Values.imageRegistryNamespace | default .Release.Namespace }}/{{ .Values.init.image.name }}:{{ .Values.init.image.tag | default .Chart.AppVersion }}
+    gui: {{ .Values.imageRegistry }}/{{ .Values.imageRegistryNamespace | default .Release.Namespace }}/{{ .Values.gui.image.name }}:{{ .Values.gui.image.tag | default .Chart.AppVersion }}
+    postgres: "{{ .Values.postgres.image.name }}"
+    pmcollector: {{ .Values.imageRegistry }}/{{ .Values.imageRegistryNamespace | default .Release.Namespace }}/{{ .Values.collector.image.name }}:{{ .Values.collector.image.tag | default .Chart.AppVersion }}
+    sysmon: {{ .Values.imageRegistry }}/{{ .Values.imageRegistryNamespace | default .Release.Namespace }}/{{ .Values.monitor.image.name }}:{{ .Values.monitor.image.tag | default .Chart.AppVersion }}
+    logs: "{{ .Values.logs.image.name }}"
+
+  # -------------------------------------------------------------------------------
+  # call home functionality is optional
+  # -------------------------------------------------------------------------------
+  {{- if .Values.callHome }}
+  callhome:
+    {{- toYaml .Values.callHome | nindent 4 }}
+  {{- end }}
+
+  # -------------------------------------------------------------------------------
+  # filesystems block is required for Remote Mount
+  # -------------------------------------------------------------------------------
+  # filesystems[name].remoteMount.storageCluster refers to the name of a remoteCluster defined in the proceeding block
+  # note: adding, removing, or updating a filesystem name or mountPoint after first deployment will require manual pod deletions.
+  filesystems:
+    - name: "{{ .Values.primaryFilesystem.name }}"
+      remoteMount:
+        storageCluster: "{{ .Values.primaryFilesystem.storageCluster }}"
+        storageFs: "{{ .Values.primaryFilesystem.storageFs }}"
+      # mountPoint must start with `/mnt`
+      mountPoint: "{{ .Values.primaryFilesystem.mountPoint }}"
+    {{- if .Values.addlFilesystems }}
+      {{- toYaml .Values.addlFilesystems | nindent 4 }}
+    {{- end }}
+
+  # -------------------------------------------------------------------------------
+  # The remoteClusters field is required for remote mount
+  # -------------------------------------------------------------------------------
+  # A remoteCluster definition provides the name, hostname, its GUI secret, and contact node.
+  # The remoteCluster name is referenced in the filesystems[name].remoteMount.storageCluster
+  # used for Remote Mount
+  remoteClusters:
+    - name: "{{ .Values.primaryRemoteStorageCluster.name }}"
+      gui:
+        host: "{{ .Values.primaryRemoteStorageCluster.gui.host }}"
+        secretName: "{{ .Values.primaryRemoteStorageCluster.gui.secretName }}"
+        {{- if .Values.primaryRemoteStorageCluster.gui.cacert }}
+        cacert: {{ .Values.primaryRemoteStorageCluster.gui.cacert }}
+        {{- end }}
+        insecureSkipVerify: {{ .Values.primaryRemoteStorageCluster.gui.insecureSkipVerify }}
+      {{- if .Values.primaryRemoteStorageCluster.contactNodes }}
+      contactNodes:
+        {{- toYaml .Values.primaryRemoteStorageCluster.contactNodes | nindent 8 }}
+      {{- end }}
+    {{- if .Values.addlRemoteStorageClusters }}
+      {{- toYaml .Values.addlRemoteStorageClusters | nindent 4 }}
+    {{- end }}
+
+  # -------------------------------------------------------------------------------
+  # hostAliases is optional
+  # -------------------------------------------------------------------------------
+  # hostAliases is used in an environment where DNS cannot resolve the remote (storage) cluster
+  # note: changing this field after first deployment will require manual pod deletions.
+  {{- if .Values.hostAliases }}
+  hostAliases:
+    {{- toYaml .Values.hostAliases | nindent 4 }}
+  {{- end }}

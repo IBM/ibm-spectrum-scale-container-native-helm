@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    helm.sh/chart: {{ include "ibm-spectrum-scale.chart" . }}
+    app.kubernetes.io/instance: ibm-spectrum-scale-core-operator
+    app.kubernetes.io/managed-by: ibm-spectrum-scale-core-operator
+    app.kubernetes.io/name: ibm-spectrum-scale-core-operator
+    product: ibm-spectrum-scale-core
+    release: ibm-spectrum-scale-core-operator
+  name: ibm-spectrum-scale-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: ibm-spectrum-scale-core-operator
+  template:
+    metadata:
+      labels:
+        name: ibm-spectrum-scale-core-operator
+        app.kubernetes.io/instance: ibm-spectrum-scale-core-operator
+        app.kubernetes.io/managed-by: ibm-spectrum-scale-core-operator
+        app.kubernetes.io/name: ibm-spectrum-scale-core-operator
+    spec:
+      serviceAccountName: ibm-spectrum-scale-operator
+      hostIPC: false
+      hostNetwork: false
+      hostPID: false
+      containers:
+        - name: operator
+          command:
+            - /manager
+          args:
+            - --enable-leader-election
+            # Log level can be set to info or debug
+            - --zap-log-level={{ .Values.operator.loglevel.zapLogLevel }}
+            # Stacktrace level can be info or error
+            - --zap-stacktrace-level={{ .Values.operator.loglevel.zapStacktraceLevel }}
+            # Encoder can be set to json if desired
+            # - --zap-encoder=json
+            {{- if .Values.operator.loglevel.zapEncoder }}
+            - --zap-encoder={{ .Values.operator.loglevel.zapEncoder }}
+            {{- end }}
+          # Replace the value to point at the operator image
+          # Example using internal image repository: image-registry.openshift-image-registry.svc:5000/ibm-spectrum-scale-ns/ibm-spectrum-scale-core-operator:vX.X.X.X
+          image: "{{ .Values.imageRegistry }}/{{ .Values.imageRegistryNamespace | default .Release.Namespace }}/{{ .Values.operator.image.name }}:{{ .Values.operator.image.tag | default .Chart.AppVersion }}"
+          # resources:
+          #   limits:
+          #     cpu: 100m
+          #     memory: 30Mi
+          #   requests:
+          #     cpu: 100m
+          #     memory: 20Mi
+          imagePullPolicy: {{ .Values.operator.image.pullPolicy }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+          env:
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          volumeMounts:
+            - name: cabundle
+              mountPath: /etc/ssl/service
+      volumes:
+        - name: cabundle
+          configMap:
+            name: "ibm-spectrum-scale-cabundle"
+            optional: true

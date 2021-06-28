@@ -1,9 +1,9 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
+  name: ibm-spectrum-scale-core
   labels:
     helm.sh/chart: {{ include "ibm-spectrum-scale.chart" . }}
-  name: ibm-spectrum-scale-core
 rules:
   - apiGroups:
       - ""

@@ -2,12 +2,12 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    helm.sh/chart: {{ include "ibm-spectrum-scale.chart" . }}
-    app.kubernetes.io/instance: ibm-spectrum-scale-core-operator
-    app.kubernetes.io/managed-by: ibm-spectrum-scale-core-operator
-    app.kubernetes.io/name: ibm-spectrum-scale-core-operator
+    app.kubernetes.io/instance: ibm-spectrum-scale-operator
+    app.kubernetes.io/managed-by: ibm-spectrum-scale-operator
+    app.kubernetes.io/name: ibm-spectrum-scale-operator
     product: ibm-spectrum-scale-core
-    release: ibm-spectrum-scale-core-operator
+    release: ibm-spectrum-scale-operator
+    helm.sh/chart: {{ include "ibm-spectrum-scale.chart" . }}
   name: ibm-spectrum-scale-operator
 rules:
   - apiGroups:

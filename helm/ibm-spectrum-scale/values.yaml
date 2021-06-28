@@ -1,12 +1,12 @@
 # ----------------------------------------------------------------------
 # Default Helm chart values for 
-# IBM Spectrum Scale Container Native Storage Access v5.1.0.3
+# IBM Spectrum Scale Container Native Storage Access v5.1.1.1
 # ----------------------------------------------------------------------
 # DISCLAIMER:
 # These Helm charts are only intended to provide ease of use for an 
 # initial deployment (helm install) of 
-# IBM Spectrum Scale Container Native Storage Access (CNSA) 5.1.0.3 
-# and IBM Spectrum Scale CSI driver version v2.1.0 for 
+# IBM Spectrum Scale Container Native Storage Access (CNSA) 5.1.1.1 
+# and IBM Spectrum Scale CSI driver version v2.2.0 for 
 # Proof of Concepts (PoCs), demos or any other form of evaluations
 # where no further lifecycle managment and upgrade paths are considered. 
 # They are explicitely not intended and not suported for 
@@ -30,7 +30,11 @@
 # changes or upgrades to the deployment.
 # ----------------------------------------------------------------------
 # Deploy Helm chart into its own namespace, e.g.
-# helm install <ibm-spectrum-scale> ./helm/ibm-spectrum-scale -n <ibm-spectrum-scale>
+# helm install ibm-spectrum-scale helm/ibm-spectrum-scale -n ibm-spectrum-scale
+# with
+#   ibm-spectrum-scale: Helm release name of the deployment, can be freely chosen
+#   helm/ibm-spectrum-scale: Helm chart of IBM Spectrum Scale CNSA
+#   -n ibm-spectrum-scale: Namespace of the deployment
 # ----------------------------------------------------------------------
 # Note: In the default configuration Spectrum Scale services will be deployed on 
 #       all OpenShift worker nodes (a specific nodeSelector label can be added below).
@@ -40,43 +44,47 @@
 ## CUSTOMER ENVIRONMENT CONFIGURATION ##
 ########################################
 
-## -----------------------------------------
-##  IBM Spectrum Scale CNSA: Image Registry
-## -----------------------------------------
+## See https://www.ibm.com/docs/en/scalecontainernative?topic=operator-custom-resource
+## for additional information on the parameters used by the Custom Resource (CR).
 
-# REQUIRED: imageRegistry as FQDN[:port] to pull the IBM Spectrum Scale CNSA images from (e.g. OpenShift internal registry: "image-registry.openshift-image-registry.svc:5000")
-imageRegistry: "image-registry.openshift-image-registry.svc:5000"
-# OPTIONAL: imageRegistryNamespace: Namespace used in the internal image registry; if set to "" the release namespace for the deployment will be used (e.g. ibm-spectrum-scale)
-imageRegistryNamespace: ""
-# OPTIONAL: imageRegistrySecret: This is the name of the imagePullSecret required for accessing an external image registry to pull images, e.g. created with: 
-# kubectl create secret docker-registry [name] -n [namespace] --docker-server=[registry] --docker-username=[name] --docker-password=[password/token] --docker-email=[email]
-# See https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-# imageRegistrySecret: "spectrumscale-registrykey"
-imageRegistrySecret: ""
+## --------------------------------------------
+##  IBM Spectrum Scale CNSA: License Agreement
+## --------------------------------------------
+
+# REQUIRED: User must accept the Spectrum Scale license to deploy a CNSA cluster. 
+# accept: By specifying "true" the user agrees to the terms and conditions set forth by 
+#         the IBM Spectrum Scale Container Native Data Access/Data Management license located at
+#         https://www14.software.ibm.com/cgi-bin/weblap/lap.pl?l=en&popup=y&li_formnum=L-CPES-C3MSKL&title=IBM%20License%20Agreement
+# license: Enter either "data-access" (default) or "data-management" based on your granted license. 
+#          Customers entitled to the Data Management Edition can use either "data-management" or "data-access". 
+#          Customers entitled to the Data Access Edition can only use "data-access".
+license:
+    accept: false
+    license: data-access
 
 ## --------------------------------------------------------
 ##  IBM Spectrum Scale CNSA: Primary Storage Configuration
 ## --------------------------------------------------------
 
-# REQUIRED: primaryFilesystem: refers to the local file system mounted from a remote storage cluster that will also host the IBM Spectrum Scale CSI primary fileset
-# name: name of the file system in the local IBM Spectrum Scale CNSA cluster (Note: "_" is not allowed as part of the local file system name)
-#       IMPORTANT: the local "name" must comply with DNS label name rules, see https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#dns-label-names)
-# mountPoint: mount point of the file system in the local IBM Spectrum Scale CNSA cluster; must start with "/mnt"
-# storageCluster: reference to the section below in primaryRemoteStorageCluster defining the remote IBM Spectrum Scale storage cluster
-# storageFs: name of the file system on the remote IBM Spectrum Scale storage cluster
+# REQUIRED: The primaryFilesystem section refers to the local file system mounted from a remote storage cluster that will also host the IBM Spectrum Scale CSI driver primary fileset.
+# name: Name of the file system in the local IBM Spectrum Scale CNSA cluster (Note: "_" is not allowed as part of the local file system name).
+#       IMPORTANT: The local "name" must comply with DNS label name rules at https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#dns-label-names.
+# mountPoint: Mount point of the file system in the local IBM Spectrum Scale CNSA cluster. Must start with "/mnt".
+# storageCluster: Internal reference to corresponding section in primaryRemoteStorageCluster below which defines the details of the remote IBM Spectrum Scale storage cluster.
+# storageFs: Device name of the file system on the remote IBM Spectrum Scale storage cluster used for the remote mount.
 primaryFilesystem:
   name:           "fs1"
   mountPoint:     "/mnt/fs1"
   storageCluster: "storageCluster1"
   storageFs:      "ess_fs1"
 
-# REQUIRED: primaryRemoteStorageCluster: refers to the remote storage cluster that will also host the IBM Spectrum Scale CSI primary file system
-# name: internally used reference to the storageCluster definition as used above in the primaryFilesystem section
-# host: FQDN or IP address of the GUI host for the remote IBM Spectrum Scale storage cluster
-# secretName: name of the K8s secret in the release namespace that holds the credentials for this remote storage cluster
+# REQUIRED: The primaryRemoteStorageCluster section refers to the remote storage cluster that will also host the IBM Spectrum Scale CSI driver primary file system.
+# name: Internal name for the storageCluster definition as referred to in the primaryFilesystem section above.
+# host: FQDN or IP address of the GUI host for the remote IBM Spectrum Scale storage cluster.
+# secretName: Name of the K8s secret that holds the IBM Spectrum Scale CNSA user credentials for this remote storage cluster.
 # cacert: Name of ConfigMap containing the CA certificate of the storage cluster GUI. If not specified, the default OpenShift Container Platform CA or Red Hat CA bundle is used.
-# insecureSkipVerify: To skip TLS verification, set insecureSkipVerify to true. Recommended default is "false" to enable TLS verification for storage cluster GUI!
-# contactNodes (optional): list of contact nodes in the remote IBM Spectrum Scale storage cluster. If not specified, the operator will pick 3 nodes from the storage cluster. 
+# insecureSkipVerify: To skip TLS verification, set insecureSkipVerify to "true". Recommended default is "false" to enable TLS verification for storage cluster GUI!
+# contactNodes (optional): List of contact nodes in the remote IBM Spectrum Scale storage cluster. If not specified, the operator will pick 3 nodes from the storage cluster. 
 primaryRemoteStorageCluster:
   name:               "storageCluster1"
   gui:
@@ -90,11 +98,12 @@ primaryRemoteStorageCluster:
 ##  IBM Spectrum Scale CNSA: Additional Storage Configuration
 ## -----------------------------------------------------------
 
-# OPTIONAL: addlFilesystems: refers to other local file systems mounted from a remote storage cluster (uncomment and replicate block to add more file systems)
-# name: name of the file system in the local IBM Spectrum Scale CNSA cluster
-# mountPoint: mount point of the file system in the local IBM Spectrum Scale CNSA cluster; must start with "/mnt"
-# storageCluster: reference to the section below in addlRemoteStorageClusters defining the remote IBM Spectrum Scale storage cluster
-# storageFs: name of the file system on the remote IBM Spectrum Scale storage cluster
+# OPTIONAL: The addlFilesystems section refers to other local file systems mounted from a remote storage cluster (uncomment and replicate block to add more file systems).
+# name: Name of the file system in the local IBM Spectrum Scale CNSA cluster (Note: "_" is not allowed as part of the local file system name).
+#       IMPORTANT: The local "name" must comply with DNS label name rules at https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#dns-label-names.
+# mountPoint: Mount point of the file system in the local IBM Spectrum Scale CNSA cluster. Must start with "/mnt".
+# storageCluster: Internal reference to corresponding section in primaryRemoteStorageCluster or addlRemoteStorageClusters which defines the details of the remote IBM Spectrum Scale storage cluster.
+# storageFs: Device name of the file system on the remote IBM Spectrum Scale storage cluster used for the remote mount.
 addlFilesystems:
 #  - name:             "fs2"
 #    mountPoint:       "/mnt/fs2"
@@ -102,46 +111,48 @@ addlFilesystems:
 #      storageCluster: "storageCluster2"
 #      storageFs:      "ess_fs2"
 
-# OPTIONAL: addlRemoteClusters: refers to additional remote IBM Spectrum Scale storage clusters (uncomment and replicate block to add more remote storage clusters)
-# name: internally used reference to the storageCluster definition as used above in addlFilesystems section
-# host: FQDN or IP address of the GUI host for the remote IBM Spectrum Scale storage cluster
-# secretName: name of the K8s secret in the release namespace that holds the credentials for this remote storage cluster
+# OPTIONAL: The addlRemoteClusters section refers to additional remote IBM Spectrum Scale storage clusters (uncomment and replicate block to add more remote storage clusters).
+# name: Internal name for the storageCluster definition as referred to in the addlFilesystems section above. Don't use same name as used in primaryRemoteStorageCluster above!
+# host: FQDN or IP address of the GUI host for the remote IBM Spectrum Scale storage cluster.
+# secretName: Name of the K8s secret that holds the IBM Spectrum Scale CNSA user credentials for this remote storage cluster.
 # cacert: Name of ConfigMap containing the CA certificate of the storage cluster GUI. If not specified, the default OpenShift Container Platform CA or Red Hat CA bundle is used.
-# insecureSkipVerify: To skip TLS verification, the insecureSkipVerify option must be set to true. 
-# contactNodes (optional): list of contact nodes in the remote storage cluster. If not specified, the operator will pick 3 nodes from the storage cluster. 
+# insecureSkipVerify: To skip TLS verification, set insecureSkipVerify to "true". Recommended default is "false" to enable TLS verification for storage cluster GUI!
+# contactNodes (optional): List of contact nodes in the remote IBM Spectrum Scale storage cluster. If not specified, the operator will pick 3 nodes from the storage cluster. 
 addlRemoteStorageClusters:
 #  - name:               "storageCluster2"
 #    gui:  
 #      host:               "my-scale-gui2.mydomain.com"
 #      secretName:         "cnsa-remote-gui-secret2"
 #      #cacert:             "cacert-storage-cluster-2"
-#      insecureSkipVerify: true
+#      insecureSkipVerify: false
 #    contactNodes: [storageCluster2node1, storageCluster2node2, storageCluster2node3]
 
 ## ------------------------------------
 ##  IBM Spectrum Scale CNSA: Call Home
 ## ------------------------------------
+## By accepting Call Home you agree to allow IBM and its subsidiaries to store and use your contact information and your support information 
+## anywhere they do business worldwide. For more information, please refer to the Program license agreement and documentation.
+## For more information about call home, see https://www.ibm.com/docs/en/spectrum-scale/5.1.1?topic=overview-understanding-call-home.
 
-# OPTIONAL: To enable IBM Call Home support, remove the first "#" character on each line of below "callHome:" and provide the required information
-# acceptLicense: If you agree, please respond with "true" for acceptance, else with "false" to decline.
-# companyName; Name of the company to which the contact person belongs.
-# This name can consist of any alphanumeric characters and these non-alphanumeric characters: '-', '_', '.', ' ', ','.
-# customerID: the IBM ID received by the customer upon purchasing a IBM Spectrum Scale license / or DEVLIC (developer edition) or TRYBUY (test edition)
-# This can consist of any alphanumeric characters and these non-alphanumeric characters: '-', '_', '.'.
-# companyEmail: a group or task e-mail address to be contacted by IBM Support
-# countryCode: two-letter uppercase country code in the ISO 3166-1 alpha-2 format (e.g. US for USA, DE for Germany).
-# type: Marks the cluster as a "test" or a "production" system. In case this parameter is not explicitly set, the value is set to "production" by default.
-# If a proxy should be used for uploads provide the following information / otherwise leave "#" in place to not use a proxy 
-#   host of proxy server as hostname or IP address
-#   port of proxy server
-#   secretName of a basic-auth secret, which contains username and password for proxy server
-#   Leave "#" if no authentication to the proxy server is needed.
+# OPTIONAL: To enable IBM Call Home support, accept the license, remove the first "#" character on each line below and provide the required information.
+# acceptLicense: If you agree, please respond with "true" for acceptance, else with "false" to decline (in this case call home will not be enabled)
+# companyName: Name of the company to which the contact person belongs.
+#              This name can consist of any alphanumeric characters and these non-alphanumeric characters: '-', '_', '.', ' ', ','.
+# customerID: The IBM ID received by the customer upon purchasing a IBM Spectrum Scale license / or DEVLIC (developer edition) or TRYBUY (test edition).
+#             This can consist of any alphanumeric characters and these non-alphanumeric characters: '-', '_', '.'.
+# companyEmail: A group or task e-mail address to be contacted by IBM Support.
+# countryCode: A two-letter uppercase country code in the ISO 3166-1 alpha-2 format (e.g. US for USA, DE for Germany).
+# type: Marks the cluster as a "test" or a "production" system. In case this parameter is not explicitly set, "production" is used by default.
+# If a proxy server should be used for uploads please provide the following information. Leave whole block commented out with "#" to not use a proxy. 
+#   host: proxy server hostname or IP address
+#   port: port of proxy server
+#   secretName: Name of a basic-auth secret containg "username" and "password" for the proxy server. Leave commented out with "#" if no authentication for the proxy is required.
 callHome:
-#  acceptLicense: true
+  acceptLicense: false
 #  companyName: "company"
 #  customerID: "123456-kl"
 #  companyEmail: "smith@email"
-#  countryCode: "de"
+#  countryCode: "DE"
 #  type: production | test
 #  proxy:
 #    host: "192.1.1.1"
@@ -160,6 +171,7 @@ hostAliases:
 ## ------------------------------------------------------
 ##  IBM Spectrum Scale CNSA: Node Selector Configuration
 ## ------------------------------------------------------
+## https://www.ibm.com/docs/en/scalecontainernative?topic=operator-selectors-labels 
 
 # REQUIRED: nodeSelector ensures to deploy IBM Spectrum Scale CNSA pods on nodes only matching the following node labels
 # The Operator will check that a node has all labels defined present in order to deploy IBM Spectrum Scale CNSA pods on this node.
@@ -170,6 +182,9 @@ nodeSelector:
 ## ----------------------------------
 ##  IBM Spectrum Scale CNSA: Profile
 ## ----------------------------------
+## https://www.ibm.com/docs/en/scalecontainernative?topic=operator-deployment-preparations
+
+# Supported IBM Spectrum Scale configuration parameters set by default via the Operator. 
 profile:
   pagepool:                           "1G"
   ignorePrefetchLUNCount:             "yes"
@@ -184,9 +199,19 @@ profile:
   controlSetxattrImmutableSELinux:    "yes"
   enforceFilesetQuotaOnRoot:          "yes"
 
+
 ####################################################
 ##  IBM SPECTRUM SCALE CNSA PACKAGE CONFIGURATION ##
 ####################################################
+
+## -----------------------------------------------------
+##  IBM Spectrum Scale CNSA: Image Registry Pull Secret
+## -----------------------------------------------------
+
+# Reference to a local imagePullSecret name referenced in the operator and core service accounts
+# The imagePullSecret will not be added to the service accounts if pullSecret is set to "".
+imageRegistry:
+  pullSecret: spectrumscale-registrykey
 
 ## -------------------------------------------
 ##  IBM Spectrum Scale CNSA: Container Images
@@ -195,59 +220,12 @@ profile:
 # Scale-Core-Operator
 operator:
   image:
-    name: ibm-spectrum-scale-core-operator
-    # If defined overrides the image tag which defaults to the chart appVersion in Chart.yaml
-    tag: ""
+    name: "icr.io/cpopen/ibm-spectrum-scale-operator@sha256:fe9d63c2b7733a5f8d7e1bc80e18de0160e298db14342c77aa4c6d2e26c4ee20"
     pullPolicy: Always
   loglevel:
-    # zapLogLevel: can be set to "info" (default) or "debug"
+    # zapLogLevel: Set to "info" (default) or "debug".
     zapLogLevel: info
-    # zapStacktraceLevel: can be "info or" "error" (default)
+    # zapStacktraceLevel: Set to "info" or "error" (default).
     zapStacktraceLevel: error
-    # zapEncoder: can be set to json if desired (default: leave unchanged) 
+    # zapEncoder: Leave default. Only uncomment line below if you desire to set it to json.
     #zapEncoder: json
-
-# Scale-Core
-core:
-  image:
-    name: ibm-spectrum-scale-core
-    # If defined overrides the image tag which defaults to the chart appVersion in Chart.yaml
-    tag: ""
-
-# Scale-Core-Init
-init:
-  image:
-    name: ibm-spectrum-scale-core
-    # If defined overrides the image tag which defaults to the chart appVersion in Chart.yaml
-    tag: ""
-
-# Scale-GUI
-gui:
-  image:
-    name: ibm-spectrum-scale-gui
-    # If defined overrides the image tag which defaults to the chart appVersion in Chart.yaml
-    tag: ""
-
-# Scale-GUI Postgres (name must include full image registry and repository path and tag if required)
-postgres:
-  image:
-    name: "docker.io/library/postgres@sha256:a2da8071b8eba341c08577b13b41527eab3968bf1c8d28123b5b07a493a26862"
-
-# Scale-pmCollector
-collector:
-  image:
-    name: ibm-spectrum-scale-pmcollector
-    # If defined overrides the image tag which defaults to the chart appVersion in Chart.yaml
-    tag: ""
-
-# Scale-Monitor
-monitor:
-  image:
-    name: ibm-spectrum-scale-monitor
-    # If defined overrides the image tag which defaults to the chart appVersion in Chart.yaml
-    tag: ""
-
-# Scale-Logs (name must include full image registry and repository path and tag if required)
-logs:
-  image:
-    name: "registry.access.redhat.com/ubi8/ubi-minimal:8.3"

@@ -2,25 +2,25 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    helm.sh/chart: {{ include "ibm-spectrum-scale.chart" . }}
-    app.kubernetes.io/instance: ibm-spectrum-scale-core-operator
-    app.kubernetes.io/managed-by: ibm-spectrum-scale-core-operator
-    app.kubernetes.io/name: ibm-spectrum-scale-core-operator
+    app.kubernetes.io/instance: ibm-spectrum-scale-operator
+    app.kubernetes.io/managed-by: ibm-spectrum-scale-operator
+    app.kubernetes.io/name: ibm-spectrum-scale-operator
     product: ibm-spectrum-scale-core
-    release: ibm-spectrum-scale-core-operator
+    release: ibm-spectrum-scale-operator
+    helm.sh/chart: {{ include "ibm-spectrum-scale.chart" . }}
   name: ibm-spectrum-scale-operator
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: ibm-spectrum-scale-core-operator
+      name: ibm-spectrum-scale-operator
   template:
     metadata:
       labels:
-        name: ibm-spectrum-scale-core-operator
-        app.kubernetes.io/instance: ibm-spectrum-scale-core-operator
-        app.kubernetes.io/managed-by: ibm-spectrum-scale-core-operator
-        app.kubernetes.io/name: ibm-spectrum-scale-core-operator
+        name: ibm-spectrum-scale-operator
+        app.kubernetes.io/instance: ibm-spectrum-scale-operator
+        app.kubernetes.io/managed-by: ibm-spectrum-scale-operator
+        app.kubernetes.io/name: ibm-spectrum-scale-operator
     spec:
       serviceAccountName: ibm-spectrum-scale-operator
       hostIPC: false
@@ -41,16 +41,14 @@ spec:
             {{- if .Values.operator.loglevel.zapEncoder }}
             - --zap-encoder={{ .Values.operator.loglevel.zapEncoder }}
             {{- end }}
-          # Replace the value to point at the operator image
-          # Example using internal image repository: image-registry.openshift-image-registry.svc:5000/ibm-spectrum-scale-ns/ibm-spectrum-scale-core-operator:vX.X.X.X
-          image: "{{ .Values.imageRegistry }}/{{ .Values.imageRegistryNamespace | default .Release.Namespace }}/{{ .Values.operator.image.name }}:{{ .Values.operator.image.tag | default .Chart.AppVersion }}"
-          # resources:
-          #   limits:
-          #     cpu: 100m
-          #     memory: 30Mi
-          #   requests:
-          #     cpu: 100m
-          #     memory: 20Mi
+          image: {{ .Values.operator.image.name }}
+          resources:
+            limits:
+              cpu: 100m
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 40Mi
           imagePullPolicy: {{ .Values.operator.image.pullPolicy }}
           securityContext:
             allowPrivilegeEscalation: false

@@ -22,22 +22,52 @@ spec:
     {{- toYaml .Values.nodeSelector | nindent 4 }}
 
   # -------------------------------------------------------------------------------
-  # images is the list of Docker container images required to deploy and run IBM Spectrum Scale
+  # license acceptance for IBM Spectrum Scale is a required field 
   # -------------------------------------------------------------------------------
-  # note: changing the following fields after first deployment will require manual pod deletions.
-  images:
-    core: {{ .Values.imageRegistry }}/{{ .Values.imageRegistryNamespace | default .Release.Namespace }}/{{ .Values.core.image.name }}:{{ .Values.core.image.tag | default .Chart.AppVersion }}
-    coreInit: {{ .Values.imageRegistry }}/{{ .Values.imageRegistryNamespace | default .Release.Namespace }}/{{ .Values.init.image.name }}:{{ .Values.init.image.tag | default .Chart.AppVersion }}
-    gui: {{ .Values.imageRegistry }}/{{ .Values.imageRegistryNamespace | default .Release.Namespace }}/{{ .Values.gui.image.name }}:{{ .Values.gui.image.tag | default .Chart.AppVersion }}
-    postgres: "{{ .Values.postgres.image.name }}"
-    pmcollector: {{ .Values.imageRegistry }}/{{ .Values.imageRegistryNamespace | default .Release.Namespace }}/{{ .Values.collector.image.name }}:{{ .Values.collector.image.tag | default .Chart.AppVersion }}
-    sysmon: {{ .Values.imageRegistry }}/{{ .Values.imageRegistryNamespace | default .Release.Namespace }}/{{ .Values.monitor.image.name }}:{{ .Values.monitor.image.tag | default .Chart.AppVersion }}
-    logs: "{{ .Values.logs.image.name }}"
+  # User must accept the Spectrum Scale license to deploy a CNSA cluster.
+  # By specifying "accept: true" below, user agrees to the terms and conditions set
+  # forth by the IBM Spectrum Scale Container Native Data Access/Data Management license located
+  # at https://www14.software.ibm.com/cgi-bin/weblap/lap.pl?l=en&popup=y&li_formnum=L-CPES-C3MSKL&title=IBM%20License%20Agreement
+  #
+  # Enter either data-access or data-management to the license.license field. Customers entitled to
+  # the Data Management Edition can use either data-management or data-access. Customers entitled to
+  # the Data Access Edition can only use data-access.
+  # -------------------------------------------------------------------------------
+  license:
+    accept: {{ .Values.license.accept | default false }}
+    license: {{ .Values.license.license | default "data-access" }}
 
   # -------------------------------------------------------------------------------
   # call home functionality is optional
   # -------------------------------------------------------------------------------
-  {{- if .Values.callHome }}
+  # # TO ENABLE: Remove the first # character on each line of this section to configure and enable call home
+  # callhome:
+  #   # By accepting this request, you agree to allow IBM and its subsidiaries to store and use your contact information and your support information anywhere they do business worldwide. For more information, please refer to the Program license agreement and documentation.
+  #   # If you agree, please respond with "true" for acceptance, else with "false" to decline.
+  #   acceptLicense: true | false
+  #   # companyName of the company to which the contact person belongs.
+  #   # This name can consist of any alphanumeric characters and these non-alphanumeric characters: '-', '_', '.', ' ', ','.
+  #   companyName:
+  #   # customerID of the system administrator who can be contacted by the IBM Support.
+  #   # This can consist of any alphanumeric characters and these non-alphanumeric characters: '-', '_', '.'.
+  #   customerID: ""
+  #   # companyEmail address of the system administrator who can be contacted by the IBM Support.
+  #   # Usually this e-mail address is directed towards a group or task e-mail address. For example, itsupport@mycompanyname.com.
+  #   companyEmail:
+  #   # countryCode two-letter upper-case country codes as defined in ISO 3166-1 alpha-2.
+  #   countryCode:
+  #   # Marks the cluster as a "test" or a "production" system. In case this parameter is not explicitly set, the value is set to "production" by default.
+  #   type: production | test
+  #   # Remove or leave the proxy block commented if a proxy should not be used for uploads
+  #   proxy:
+  #     # host of proxy server as hostname or IP address
+  #     host:
+  #     # port of proxy server
+  #     port:
+  #     # secretName of a basic-auth secret, which contains username and password for proxy server
+  #     # Remove the secretName if no authentication to the proxy server is needed.
+  #     secretName:
+  {{- if .Values.callHome.acceptLicense }}
   callhome:
     {{- toYaml .Values.callHome | nindent 4 }}
   {{- end }}
@@ -86,7 +116,11 @@ spec:
   # -------------------------------------------------------------------------------
   # hostAliases is used in an environment where DNS cannot resolve the remote (storage) cluster
   # note: changing this field after first deployment will require manual pod deletions.
+  # hostAliases:
+  #   - hostname: example.com
+  #     ip: 10.0.0.1
   {{- if .Values.hostAliases }}
   hostAliases:
     {{- toYaml .Values.hostAliases | nindent 4 }}
   {{- end }}
+  

@@ -24,14 +24,14 @@ spec:
 # plugin. It can have multiple values.
 # ==================================================================================
   clusters:
-    - id: "{{ .Values.primaryCluster.localClusterId }}"
-      secrets: "{{ .Values.primaryCluster.localCsiSecret }}"
-      secureSslMode: {{ .Values.primaryCluster.localSecureSslMode }}
-      {{- if .Values.primaryCluster.localCAcert }}      
-      cacert:  "{{ .Values.primaryCluster.localCAcert }}"
+    - id: "{{ .Values.primaryCluster.local.clusterId }}"
+      secrets: "{{ .Values.primaryCluster.local.secret }}"
+      secureSslMode: {{ .Values.primaryCluster.local.secureSslMode }}
+      {{- if .Values.primaryCluster.local.cacert }}      
+      cacert:  "{{ .Values.primaryCluster.local.cacert }}"
       {{- end }}
       restApi:
-        - guiHost: "{{ .Values.primaryCluster.localGuiHost }}"
+        - guiHost: "{{ .Values.primaryCluster.local.guiHost }}"
       primary:
         primaryFs: "{{ .Values.primaryFilesystem.name | default .Values.primaryCluster.primaryFs }}"
         {{- if .Values.primaryCluster.primaryFset }}
@@ -40,18 +40,18 @@ spec:
         {{- if .Values.primaryCluster.primaryFsetInodeLimit }}
         inodeLimit: "{{ .Values.primaryCluster.primaryFsetInodeLimit }}"
         {{- end }}
-        {{- if .Values.primaryCluster.primaryRemoteClusterId }}
-        remoteCluster: "{{ .Values.primaryCluster.primaryRemoteClusterId }}"            
+        {{- if .Values.primaryCluster.remote.clusterId }}
+        remoteCluster: "{{ .Values.primaryCluster.remote.clusterId }}"            
         {{- end }}
-    {{- if .Values.primaryCluster.primaryRemoteClusterId }}
-    - id: "{{ .Values.primaryCluster.primaryRemoteClusterId }}"
-      secrets: "{{ .Values.primaryCluster.primaryRemoteCsiSecret }}"
-      secureSslMode: {{ .Values.primaryCluster.primaryRemoteSecureSslMode }}
-      {{- if .Values.primaryCluster.primaryRemoteCAcert }}
-      cacert:  "{{ .Values.primaryCluster.primaryRemoteCAcert }}"
+    {{- if .Values.primaryCluster.remote.clusterId }}
+    - id: "{{ .Values.primaryCluster.remote.clusterId }}"
+      secrets: "{{ .Values.primaryCluster.remote.secret }}"
+      secureSslMode: {{ .Values.primaryCluster.remote.secureSslMode }}
+      {{- if .Values.primaryCluster.remote.cacert }}
+      cacert:  "{{ .Values.primaryCluster.remote.cacert }}"
       {{- end }}
       restApi:
-        - guiHost: "{{ .Values.primaryRemoteStorageCluster.gui.host | default .Values.primaryCluster.primaryRemoteGuiHost }}"
+        - guiHost: "{{ .Values.primaryRemoteStorageCluster.gui.host | default .Values.primaryCluster.remote.guiHost }}"
     {{- end }}
     {{- if .Values.addlRemoteClusters }}
       {{- toYaml .Values.addlRemoteClusters | nindent 4 }}

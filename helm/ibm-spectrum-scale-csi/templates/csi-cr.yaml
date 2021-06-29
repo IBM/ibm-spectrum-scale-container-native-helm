@@ -139,6 +139,12 @@ spec:
 # In case K8s nodes name differs from SpectrumScale nodes name, we can provide
 # node mapping using nodeMapping attribute. Can have multiple entries.
 # ==================================================================================
+#  nodeMapping:
+#    - k8sNode: "< K8s Node Name >"
+#      spectrumscaleNode: "< SpectrumScale Node Name >"
+# In case K8s node name start with number then use following node mapping format.
+#    - k8sNode: "K8sNodePrefix_< K8s Node Name >"
+#      spectrumscaleNode: "< SpectrumScale Node Name >"
 {{- if .Values.csiNodeMapping }}
   nodeMapping:
     {{- toYaml .Values.csiNodeMapping | nindent 4 }}
@@ -148,6 +154,12 @@ spec:
 # k8s documentation for your environment for more details.
 # https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
 # ==================================================================================
+#  tolerations:
+#    - key: "key1"
+#      operator: "Equal"
+#      value: "value1"
+#      effect: "NoExecute"
+#      tolerationSeconds: 3600
 {{- if .Values.csiTolerations }}
   tolerations:
     {{- toYaml .Values.csiTolerations | nindent 4 }}

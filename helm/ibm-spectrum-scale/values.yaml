@@ -51,8 +51,8 @@
 ##  IBM Spectrum Scale CNSA: License Agreement
 ## --------------------------------------------
 
-# REQUIRED: User must accept the Spectrum Scale license to deploy a CNSA cluster. 
-# accept: By specifying "true" the user agrees to the terms and conditions set forth by 
+# REQUIRED: User must accept the IBM Spectrum Scale license to deploy a CNSA cluster. 
+# accept: By specifying true the user agrees to the terms and conditions set forth by 
 #         the IBM Spectrum Scale Container Native Data Access/Data Management license located at
 #         https://www14.software.ibm.com/cgi-bin/weblap/lap.pl?l=en&popup=y&li_formnum=L-CPES-C3MSKL&title=IBM%20License%20Agreement
 # license: Enter either "data-access" (default) or "data-management" based on your granted license. 
@@ -83,14 +83,14 @@ primaryFilesystem:
 # host: FQDN or IP address of the GUI host for the remote IBM Spectrum Scale storage cluster.
 # secretName: Name of the K8s secret that holds the IBM Spectrum Scale CNSA user credentials for this remote storage cluster.
 # cacert: Name of ConfigMap containing the CA certificate of the storage cluster GUI. If not specified, the default OpenShift Container Platform CA or Red Hat CA bundle is used.
-# insecureSkipVerify: To skip TLS verification, set insecureSkipVerify to "true". Recommended default is "false" to enable TLS verification for storage cluster GUI!
+# insecureSkipVerify: To skip TLS verification, set insecureSkipVerify to true. Recommended default is false to enable TLS verification for storage cluster GUI!
 # contactNodes (optional): List of contact nodes in the remote IBM Spectrum Scale storage cluster. If not specified, the operator will pick 3 nodes from the storage cluster. 
 primaryRemoteStorageCluster:
-  name:               "storageCluster1"
+  name:                 "storageCluster1"
   gui:
     host:               "remote-scale-gui.mydomain.com"
     secretName:         "cnsa-remote-gui-secret"
-    #cacert:             "cacert-storage-cluster"
+    #cacert:            "cacert-storage-cluster"
     insecureSkipVerify: false
   #contactNodes: [storageCluster1node1, storageCluster1node2, storageCluster1node3]
 
@@ -105,37 +105,39 @@ primaryRemoteStorageCluster:
 # storageCluster: Internal reference to corresponding section in primaryRemoteStorageCluster or addlRemoteStorageClusters which defines the details of the remote IBM Spectrum Scale storage cluster.
 # storageFs: Device name of the file system on the remote IBM Spectrum Scale storage cluster used for the remote mount.
 addlFilesystems:
-#  - name:             "fs2"
-#    mountPoint:       "/mnt/fs2"
+#  - name:              "fs2"
+#    mountPoint:        "/mnt/fs2"
 #    remoteMount:
-#      storageCluster: "storageCluster2"
-#      storageFs:      "ess_fs2"
+#      storageCluster:  "storageCluster2"
+#      storageFs:       "ess_fs2"
 
 # OPTIONAL: The addlRemoteClusters section refers to additional remote IBM Spectrum Scale storage clusters (uncomment and replicate block to add more remote storage clusters).
 # name: Internal name for the storageCluster definition as referred to in the addlFilesystems section above. Don't use same name as used in primaryRemoteStorageCluster above!
 # host: FQDN or IP address of the GUI host for the remote IBM Spectrum Scale storage cluster.
 # secretName: Name of the K8s secret that holds the IBM Spectrum Scale CNSA user credentials for this remote storage cluster.
 # cacert: Name of ConfigMap containing the CA certificate of the storage cluster GUI. If not specified, the default OpenShift Container Platform CA or Red Hat CA bundle is used.
-# insecureSkipVerify: To skip TLS verification, set insecureSkipVerify to "true". Recommended default is "false" to enable TLS verification for storage cluster GUI!
+# insecureSkipVerify: To skip TLS verification, set insecureSkipVerify to true. Recommended default is false to enable TLS verification for storage cluster GUI!
 # contactNodes (optional): List of contact nodes in the remote IBM Spectrum Scale storage cluster. If not specified, the operator will pick 3 nodes from the storage cluster. 
 addlRemoteStorageClusters:
-#  - name:               "storageCluster2"
+#  - name:                  "storageCluster2"
 #    gui:  
-#      host:               "my-scale-gui2.mydomain.com"
-#      secretName:         "cnsa-remote-gui-secret2"
+#      host:                "my-scale-gui2.mydomain.com"
+#      secretName:          "cnsa-remote-gui-secret2"
 #      #cacert:             "cacert-storage-cluster-2"
-#      insecureSkipVerify: false
+#      insecureSkipVerify:  false
 #    contactNodes: [storageCluster2node1, storageCluster2node2, storageCluster2node3]
 
 ## ------------------------------------
 ##  IBM Spectrum Scale CNSA: Call Home
 ## ------------------------------------
+## https://www.ibm.com/docs/en/scalecontainernative?topic=operator-custom-resource
+
 ## By accepting Call Home you agree to allow IBM and its subsidiaries to store and use your contact information and your support information 
 ## anywhere they do business worldwide. For more information, please refer to the Program license agreement and documentation.
 ## For more information about call home, see https://www.ibm.com/docs/en/spectrum-scale/5.1.1?topic=overview-understanding-call-home.
 
 # OPTIONAL: To enable IBM Call Home support, accept the license, remove the first "#" character on each line below and provide the required information.
-# acceptLicense: If you agree, please respond with "true" for acceptance, else with "false" to decline (in this case call home will not be enabled)
+# acceptLicense: If you agree, please respond with true for acceptance, else with false to decline (in this case call home will not be enabled)
 # companyName: Name of the company to which the contact person belongs.
 #              This name can consist of any alphanumeric characters and these non-alphanumeric characters: '-', '_', '.', ' ', ','.
 # customerID: The IBM ID received by the customer upon purchasing a IBM Spectrum Scale license / or DEVLIC (developer edition) or TRYBUY (test edition).
@@ -162,6 +164,7 @@ callHome:
 ## ---------------------------------------
 ##  IBM Spectrum Scale CNSA: Host Aliases
 ## ---------------------------------------
+## https://www.ibm.com/docs/en/scalecontainernative?topic=operator-custom-resource
 
 # OPTIONAL: hostAliases for environments where DNS cannot resolve the nodes of the remote IBM Spectrum Scale storage cluster. Uncomment and replicate list items to add more aliases.
 hostAliases:

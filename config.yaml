@@ -82,7 +82,7 @@ primaryRemoteStorageCluster:
 ##  IBM Spectrum Scale CSI: Primary File System Configuration
 ## -----------------------------------------------------------
 
-# REQUIRED: primaryCluster is the local IBM Spectrum Scale CNSA cluster that will mount the primary file system to store IBM Spectrum Scale CSI driver configuration data.
+# REQUIRED: primaryCluster is the local IBM Spectrum Scale CNSA cluster that will mount the primary file system and store IBM Spectrum Scale CSI driver configuration data.
 primaryCluster:
   local:
     # REQUIRED: clusterId is the Cluster ID of the local IBM Spectrum Scale CNSA cluster (will be specified with helm install --set primaryCluster.local.clusterId="$CLUSTERID").

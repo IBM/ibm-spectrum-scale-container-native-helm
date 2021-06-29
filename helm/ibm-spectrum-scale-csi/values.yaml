@@ -61,7 +61,7 @@ csiNamespace: ""
 ##  IBM Spectrum Scale CSI: Primary File System Configuration
 ## -----------------------------------------------------------
 
-# REQUIRED: primaryCluster is the local IBM Spectrum Scale CNSA cluster that will mount the primary file system to store IBM Spectrum Scale CSI driver configuration data.
+# REQUIRED: primaryCluster is the local IBM Spectrum Scale CNSA cluster that will mount the primary file system and store IBM Spectrum Scale CSI driver configuration data.
 primaryCluster:
   # REQUIRED: primaryFs is the primary file system for IBM Spectrum Scale CSI driver to store its config data. CNSA configuration will be applied here automatically. 
   primaryFs:              "fs1"

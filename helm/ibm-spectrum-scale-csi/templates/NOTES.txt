@@ -2,7 +2,7 @@
 IBM Spectrum Scale CSI {{ .Chart.AppVersion }} for CNSA on OpenShift
 ------------------------------------------------------------
 
-IBM Spectrum Scale CSI driver "{{ .Chart.AppVersion }}" was deployed as 
+IBM Spectrum Scale CSI driver {{ .Chart.AppVersion }} was deployed as 
 "{{ .Release.Name }}-{{ .Chart.Version }}" release in namespace "{{ .Release.Namespace }}".
 
 Verify that all pods are in a running state. You can watch the pod status by using:

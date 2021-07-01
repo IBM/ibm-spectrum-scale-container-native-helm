@@ -2,7 +2,7 @@
 IBM Spectrum Scale Container Native Storage Access {{ .Chart.AppVersion }} for OpenShift
 ------------------------------------------------------------------------
 
-IBM Spectrum Scale Container Native Storage Access "{{ .Chart.AppVersion }}" was deployed as 
+IBM Spectrum Scale Container Native Storage Access {{ .Chart.AppVersion }} was deployed as 
 "{{ .Release.Name }}-{{ .Chart.Version }}" release in namespace "{{ .Release.Namespace }}".
 
 Verify that all pods are in a running state. You can watch the pod status by using:
@@ -18,7 +18,7 @@ This Helm chart does not provide support for any lifecycle management of this ap
 especially, "helm upgrade|rollback|uninstall" features are not supported.
 
 To remove IBM Spectrum Scale Container Native Storage Access please follow instructions at:
-https://www.ibm.com/docs/en/scalecontainernative?topic=5103-cleanup
+https://www.ibm.com/docs/en/scalecontainernative?topic=5111-cleanup
 
 The Helm chart and OpenShift resources of this deployment can be removed using:
 # oc delete scalecluster ibm-spectrum-scale -n {{ .Release.Namespace }}
@@ -33,5 +33,5 @@ Note: Only delete the project {{ .Release.Namespace }} and following resources i
 # oc debug node/<openshift_spectrum-scale_worker_node> -T -- chroot /host sh -c "rm -rf /var/mmfs; rm -rf /var/adm/ras"
 # oc get nodes -ojsonpath="{range .items[*]}{.metadata.name}{'\n'}" | xargs -I{} oc annotate node {} scale.ibm.com/nodedesc-
 
-For more information please refer to the IBM Knowledge Center at
-https://www.ibm.com/docs/en/scalecontainernative?topic=spectrum-scale-container-native-storage-access-5103
+For more information please refer to the official IBM Documentation at
+https://www.ibm.com/docs/en/scalecontainernative?topic=spectrum-scale-container-native-storage-access-5111

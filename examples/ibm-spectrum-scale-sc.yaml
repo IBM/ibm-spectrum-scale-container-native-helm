@@ -6,4 +6,9 @@ provisioner: spectrumscale.csi.ibm.com
 parameters:
   volBackendFs: "<filesystem name on local CNSA cluster>"
   clusterId: "<cluster ID of remote storage cluster>"
+  #uid: "1000"
+  #gid: "1000"
+  #inodeLimit: "1000000"
+  #filesetType: "dependent"
+  #parentFileset: "independent-fileset-fset1"
 reclaimPolicy: Delete

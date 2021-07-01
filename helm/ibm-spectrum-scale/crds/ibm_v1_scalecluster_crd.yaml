@@ -1,5 +1,3 @@
-
----
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -136,6 +134,8 @@ spec:
                       pattern: ^\/mnt
                       type: string
                     name:
+                      maxLength: 63
+                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
                       type: string
                     remoteMount:
                       properties:
@@ -150,7 +150,6 @@ spec:
                   required:
                   - name
                   type: object
-                maxItems: 1
                 minItems: 1
                 type: array
               hostAliases:
@@ -190,6 +189,34 @@ spec:
                   sysmon:
                     description: Monitor Image
                     type: string
+                type: object
+              license:
+                properties:
+                  accept:
+                    description: Please read https://www14.software.ibm.com/cgi-bin/weblap/lap.pl?l=en&popup=y&li_formnum=L-CPES-BYSVXT&title=IBM%20License%20Agreement
+                      BY DOWNLOADING, INSTALLING, COPYING, ACCESSING, CLICKING ON
+                      AN "ACCEPT" BUTTON, OR OTHERWISE USING THE PROGRAM, LICENSEE
+                      AGREES TO THE TERMS OF THIS AGREEMENT. IF YOU ARE ACCEPTING
+                      THESE TERMS ON BEHALF OF LICENSEE, YOU REPRESENT AND WARRANT
+                      THAT YOU HAVE FULL AUTHORITY TO BIND LICENSEE TO THESE TERMS.
+                      IF YOU DO NOT AGREE TO THESE TERMS, * DO NOT DOWNLOAD, INSTALL,
+                      COPY, ACCESS, CLICK ON AN "ACCEPT" BUTTON, OR USE THE PROGRAM;
+                      AND * PROMPTLY RETURN THE UNUSED MEDIA AND DOCUMENTATION TO
+                      THE PARTY FROM WHOM IT WAS OBTAINED FOR A REFUND OF THE AMOUNT
+                      PAID. IF THE PROGRAM WAS DOWNLOADED, DESTROY ALL COPIES OF THE
+                      PROGRAM.
+                    enum:
+                    - true
+                    type: boolean
+                  license:
+                    description: IBM Spectrum Scale edition being used
+                    enum:
+                    - data-access
+                    - data-management
+                    type: string
+                required:
+                - accept
+                - license
                 type: object
               manageQuorum:
                 description: ManageQuorum `true` will tell the operator to manage
@@ -269,11 +296,11 @@ spec:
                   - gui
                   - name
                   type: object
-                maxItems: 1
                 minItems: 1
                 type: array
             required:
             - filesystems
+            - license
             type: object
           status:
             description: ScaleClusterStatus defines the observed state of ScaleCluster

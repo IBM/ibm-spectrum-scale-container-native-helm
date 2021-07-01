@@ -24,14 +24,14 @@ spec:
 # plugin. It can have multiple values.
 # ==================================================================================
   clusters:
-    - id: "{{ .Values.primaryCluster.localClusterId }}"
-      secrets: "{{ .Values.primaryCluster.localCsiSecret }}"
-      secureSslMode: {{ .Values.primaryCluster.localSecureSslMode }}
-      {{- if .Values.primaryCluster.localCAcert }}      
-      cacert:  "{{ .Values.primaryCluster.localCAcert }}"
+    - id: "{{ .Values.primaryCluster.local.clusterId }}"
+      secrets: "{{ .Values.primaryCluster.local.secret }}"
+      secureSslMode: {{ .Values.primaryCluster.local.secureSslMode }}
+      {{- if .Values.primaryCluster.local.cacert }}      
+      cacert:  "{{ .Values.primaryCluster.local.cacert }}"
       {{- end }}
       restApi:
-        - guiHost: "{{ .Values.primaryCluster.localGuiHost }}"
+        - guiHost: "{{ .Values.primaryCluster.local.guiHost }}"
       primary:
         primaryFs: "{{ .Values.primaryFilesystem.name | default .Values.primaryCluster.primaryFs }}"
         {{- if .Values.primaryCluster.primaryFset }}
@@ -40,18 +40,18 @@ spec:
         {{- if .Values.primaryCluster.primaryFsetInodeLimit }}
         inodeLimit: "{{ .Values.primaryCluster.primaryFsetInodeLimit }}"
         {{- end }}
-        {{- if .Values.primaryCluster.primaryRemoteClusterId }}
-        remoteCluster: "{{ .Values.primaryCluster.primaryRemoteClusterId }}"            
+        {{- if .Values.primaryCluster.remote.clusterId }}
+        remoteCluster: "{{ .Values.primaryCluster.remote.clusterId }}"            
         {{- end }}
-    {{- if .Values.primaryCluster.primaryRemoteClusterId }}
-    - id: "{{ .Values.primaryCluster.primaryRemoteClusterId }}"
-      secrets: "{{ .Values.primaryCluster.primaryRemoteCsiSecret }}"
-      secureSslMode: {{ .Values.primaryCluster.primaryRemoteSecureSslMode }}
-      {{- if .Values.primaryCluster.primaryRemoteCAcert }}
-      cacert:  "{{ .Values.primaryCluster.primaryRemoteCAcert }}"
+    {{- if .Values.primaryCluster.remote.clusterId }}
+    - id: "{{ .Values.primaryCluster.remote.clusterId }}"
+      secrets: "{{ .Values.primaryCluster.remote.secret }}"
+      secureSslMode: {{ .Values.primaryCluster.remote.secureSslMode }}
+      {{- if .Values.primaryCluster.remote.cacert }}
+      cacert:  "{{ .Values.primaryCluster.remote.cacert }}"
       {{- end }}
       restApi:
-        - guiHost: "{{ .Values.primaryRemoteStorageCluster.gui.host | default .Values.primaryCluster.primaryRemoteGuiHost }}"
+        - guiHost: "{{ .Values.primaryRemoteStorageCluster.gui.host | default .Values.primaryCluster.remote.guiHost }}"
     {{- end }}
     {{- if .Values.addlRemoteClusters }}
       {{- toYaml .Values.addlRemoteClusters | nindent 4 }}
@@ -139,6 +139,12 @@ spec:
 # In case K8s nodes name differs from SpectrumScale nodes name, we can provide
 # node mapping using nodeMapping attribute. Can have multiple entries.
 # ==================================================================================
+#  nodeMapping:
+#    - k8sNode: "< K8s Node Name >"
+#      spectrumscaleNode: "< SpectrumScale Node Name >"
+# In case K8s node name start with number then use following node mapping format.
+#    - k8sNode: "K8sNodePrefix_< K8s Node Name >"
+#      spectrumscaleNode: "< SpectrumScale Node Name >"
 {{- if .Values.csiNodeMapping }}
   nodeMapping:
     {{- toYaml .Values.csiNodeMapping | nindent 4 }}
@@ -148,6 +154,12 @@ spec:
 # k8s documentation for your environment for more details.
 # https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
 # ==================================================================================
+#  tolerations:
+#    - key: "key1"
+#      operator: "Equal"
+#      value: "value1"
+#      effect: "NoExecute"
+#      tolerationSeconds: 3600
 {{- if .Values.csiTolerations }}
   tolerations:
     {{- toYaml .Values.csiTolerations | nindent 4 }}

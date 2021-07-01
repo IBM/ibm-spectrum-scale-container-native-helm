@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
+  name: ibm-spectrum-scale-core-profile
   labels:
     helm.sh/chart: {{ include "ibm-spectrum-scale.chart" . }}
-  name: ibm-spectrum-scale-core-profile
 data:
   profile: |
     %cluster:

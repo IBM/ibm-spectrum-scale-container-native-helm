@@ -1,13 +1,13 @@
 # ----------------------------------------------------------------------
 # Helm chart values for combined IBM Spectrum Scale CNSA/CSI Deployment
 # ----------------------------------------------------------------------
-# IBM Spectrum Scale CNSA 5.1.0.3 / CSI 2.2.0 release 
+# IBM Spectrum Scale CNSA 5.1.1.1 / CSI 2.2.0 release 
 # ----------------------------------------------------------------------
 # DISCLAIMER:
 # These Helm charts are only intended to provide ease of use for an 
 # initial deployment (helm install) of 
-# IBM Spectrum Scale Container Native Storage Access (CNSA) 5.1.0.3 
-# and IBM Spectrum Scale CSI driver version v2.1.0 for 
+# IBM Spectrum Scale Container Native Storage Access (CNSA) 5.1.1.1 
+# and IBM Spectrum Scale CSI driver version v2.2.0 for 
 # Proof of Concepts (PoCs), demos or any other form of evaluations
 # where no further lifecycle managment and upgrade paths are considered. 
 # They are explicitely not intended and not suported for 
@@ -31,44 +31,45 @@
 # changes or upgrades to the deployment.
 # ----------------------------------------------------------------------
 
-#########################################################
-## CUSTOMER ENVIRONMENT MINIMUM REQUIRED CONFIGURATION ##
-#########################################################
+##########################################################
+## CUSTOMER ENVIRONMENT: MINIMUM REQUIRED CONFIGURATION ##
+##########################################################
 
-## -----------------------------------------
-##  IBM Spectrum Scale CNSA: Image Registry
-## -----------------------------------------
+## --------------------------------------------
+##  IBM Spectrum Scale CNSA: License Agreement
+## --------------------------------------------
 
-# REQUIRED: imageRegistry as FQDN[:port] to pull the IBM Spectrum Scale CNSA images from (e.g. OpenShift internal registry: "image-registry.openshift-image-registry.svc:5000")
-imageRegistry: "image-registry.openshift-image-registry.svc:5000"
-# OPTIONAL: imageRegistryNamespace: Namespace used in the internal image registry; if set to "" the release namespace for the deployment will be used (e.g. ibm-spectrum-scale)
-imageRegistryNamespace: ""
-# OPTIONAL: imageRegistrySecret: This is the name of the imagePullSecret required for accessing an external image registry to pull images, e.g. created with: 
-# kubectl create secret docker-registry [name] -n [namespace] --docker-server=[registry] --docker-username=[name] --docker-password=[password/token] --docker-email=[email]
-# See https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-# imageRegistrySecret: "spectrumscale-registrykey"
-imageRegistrySecret: ""
+# REQUIRED: User must accept the IBM Spectrum Scale license to deploy a CNSA cluster. 
+# accept: By specifying true the user agrees to the terms and conditions set forth by 
+#         the IBM Spectrum Scale Container Native Data Access/Data Management license located at
+#         https://www14.software.ibm.com/cgi-bin/weblap/lap.pl?l=en&popup=y&li_formnum=L-CPES-C3MSKL&title=IBM%20License%20Agreement
+# license: Enter either "data-access" (default) or "data-management" based on your granted license. 
+#          Customers entitled to the Data Management Edition can use either "data-management" or "data-access". 
+#          Customers entitled to the Data Access Edition can only use "data-access".
+license:
+    accept: false
+    license: data-access
 
 ## --------------------------------------------------------
 ##  IBM Spectrum Scale CNSA: Primary Storage Configuration
 ## --------------------------------------------------------
 
-# REQUIRED: primaryFilesystem: refers to the local file system mounted from a remote storage cluster that will also host the IBM Spectrum Scale CSI primary fileset
-# name: name of the file system in the local IBM Spectrum Scale CNSA cluster (Note: "_" is not allowed as part of the local file system name)
-#       IMPORTANT: the local "name" must comply with DNS label name rules, see https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#dns-label-names)
-# mountPoint: mount point of the file system in the local IBM Spectrum Scale CNSA cluster; must start with "/mnt"
-# storageFs: name of the file system on the remote IBM Spectrum Scale storage cluster
+# REQUIRED: The primaryFilesystem section refers to the local file system mounted from a remote storage cluster that will also host the IBM Spectrum Scale CSI driver primary fileset.
+# name: Name of the file system in the local IBM Spectrum Scale CNSA cluster (Note: "_" is not allowed as part of the local file system name).
+#       IMPORTANT: The local "name" must comply with DNS label name rules at https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#dns-label-names.
+# mountPoint: Mount point of the file system in the local IBM Spectrum Scale CNSA cluster. Must start with "/mnt".
+# storageFs: Device name of the file system on the remote IBM Spectrum Scale storage cluster used for the remote mount.
 primaryFilesystem:
   name:           "fs1"
   mountPoint:     "/mnt/fs1"
   storageFs:      "ess_fs1"
 
-# REQUIRED: primaryRemoteStorageCluster: refers to the remote storage cluster that will also host the IBM Spectrum Scale CSI primary file system
-# host: FQDN or IP address of the GUI host for the remote IBM Spectrum Scale storage cluster
-# secretName: name of the K8s secret in the release namespace that holds the credentials for this remote storage cluster
+# REQUIRED: The primaryRemoteStorageCluster section refers to the remote storage cluster that will also host the IBM Spectrum Scale CSI driver primary file system.
+# host: FQDN or IP address of the GUI host for the remote IBM Spectrum Scale storage cluster.
+# secretName: Name of the K8s secret that holds the IBM Spectrum Scale CNSA user credentials for this remote storage cluster.
 # cacert: Name of ConfigMap containing the CA certificate of the storage cluster GUI. If not specified, the default OpenShift Container Platform CA or Red Hat CA bundle is used.
-# insecureSkipVerify: To skip TLS verification, set insecureSkipVerify to true. Recommended default is "false" to enable TLS verification for storage cluster GUI!
-# contactNodes (optional): list of contact nodes in the remote IBM Spectrum Scale storage cluster. If not specified, the operator will pick 3 nodes from the storage cluster. 
+# insecureSkipVerify: To skip TLS verification, set insecureSkipVerify to true. Recommended default is false to enable TLS verification for storage cluster GUI!
+# contactNodes (optional): List of contact nodes in the remote IBM Spectrum Scale storage cluster. If not specified, the operator will pick 3 nodes from the storage cluster. 
 primaryRemoteStorageCluster:
   gui:
     host:               "remote-scale-gui.mydomain.com"
@@ -81,59 +82,62 @@ primaryRemoteStorageCluster:
 ##  IBM Spectrum Scale CSI: Primary File System Configuration
 ## -----------------------------------------------------------
 
-# REQUIRED: primaryCluster: local IBM Spectrum Scale CNSA cluster that will also mount the primary file system to store IBM Spectrum Scale CSI configuration data
+# REQUIRED: primaryCluster is the local IBM Spectrum Scale CNSA cluster that will mount the primary file system and store IBM Spectrum Scale CSI driver configuration data.
 primaryCluster:
-  # REQUIRED: localClusterId: Cluster ID of the local IBM Spectrum Scale CNSA cluster (will be specified with helm install --set primaryCluster.localClusterId="$CLUSTERID")
-  # REQUIRED: localGuiHost: Kubernetes service name of local IBM Spectrum Scale CNSA GUI
-  # REQUIRED: localCsiSecret: Kubernetes secret with username/password for csi-user in the GUI of the local IBM Spectrum Scale CNSA cluster
-  # OPTIONAL: localSecureSslMode: true/false
-  # OPTIONAL: localCAcert: Name of CA cert configmap for the GUI of the local IBM Spectrum Scale CNSA cluster
-  localClusterId:         "needs-to-be-read-after-CNSA-deployment"   
-  localGuiHost:           "ibm-spectrum-scale-gui.<replace-with-CNSA-namespace>"
-  localCsiSecret:         "csi-local-secret"
-  localSecureSslMode:     false
-  localCAcert:            ""
-  # OPTIONAL: primaryFset: Leave empty as "" for default IBM Spectrum Scale CSI fileset name which is "spectrum-scale-csi-volume-store"
-  # OPTIONAL: primaryFsetInodeLimit: Leave empty as "" for using defaults for the IBM Spectrum Scale CSI fileset
-  primaryFset:            ""
-  primaryFsetInodeLimit:  ""
-  # REQUIRED: primaryRemoteClusterId: Cluster ID of the remote IBM Spectrum Scale storage cluster if primaryFs is a remote cluster file system
-  # REQUIRED: primaryRemoteCsiSecret: Name of the K8s secret with username/password for CSI to access the GUI on the remote IBM Spectrum Scale storage cluster
-  # OPTIONAL: primaryRemoteSecureSslMode: true/false
-  # OPTIONAL: primaryRemoteCAcert: Name of CA cert configmap for accessing the GUI of the remote IBM Spectrum Scale storage cluster
-  primaryRemoteClusterId:       "2303539379337927879"
-  primaryRemoteCsiSecret:       "csi-remote-secret"
-  primaryRemoteSecureSslMode:   false
-  primaryRemoteCAcert:          ""
+  local:
+    # REQUIRED: clusterId is the Cluster ID of the local IBM Spectrum Scale CNSA cluster (will be specified with helm install --set primaryCluster.local.clusterId="$CLUSTERID").
+    # REQUIRED: guiHost is the Kubernetes service name of local IBM Spectrum Scale CNSA GUI service composed of "ibm-spectrum-scale-gui.<CNSA-namespace>".
+    # REQUIRED: secret is name of the Kubernetes secret with username/password for the CSI driver user to access the GUI on the local IBM Spectrum Scale CNSA cluster.
+    clusterId:  "needs-to-be-read-after-CNSA-deployment"   
+    guiHost:    "ibm-spectrum-scale-gui.<replace-with-CNSA-namespace>"
+    secret:     "csi-local-secret"
+    # OPTIONAL: secureSslMode can be set to true or false. Default is false. If set to true cacert must be configured! 
+    # OPTIONAL: cacert is the name of CA certificate configmap for accessing the GUI of the local IBM Spectrum Scale CNSA cluster. It is ignored if set to "".
+    secureSslMode: false
+    cacert:        ""
+  remote:
+    # REQUIRED: clusterId is the cluster ID of the remote IBM Spectrum Scale storage cluster if primaryFs is a remotely mounted file system from a remote storage cluster.
+    # REQUIRED: secret is the name of the Kubernetes secret with username/password for CSI driver user to access the GUI on the remote IBM Spectrum Scale storage cluster.
+    clusterId:  "2303539379337927823"
+    secret:     "csi-remote-secret"
+    # OPTIONAL: secureSslMode can be set to true or false. Default is false. If set to true cacert must be configured! 
+    # OPTIONAL: cacert is the name of CA certificate configmap for accessing the GUI of the remote IBM Spectrum Scale storage cluster. It is ignored if set to "".
+    secureSslMode:   false
+    cacert:          ""
 
-#################################################
-## CUSTOMER ENVIRONMENT OPTIONAL CONFIGURATION ##
-#################################################
+
+##################################################
+## CUSTOMER ENVIRONMENT: OPTIONAL CONFIGURATION ##
+##################################################
 
 ## ------------------------------------
 ##  IBM Spectrum Scale CNSA: Call Home
 ## ------------------------------------
+## https://www.ibm.com/docs/en/scalecontainernative?topic=operator-custom-resource
 
-# OPTIONAL: To enable IBM Call Home support, remove the first "#" character on each line of below "callHome:" and provide the required information
-# acceptLicense: If you agree, please respond with "true" for acceptance, else with "false" to decline.
-# companyName; Name of the company to which the contact person belongs.
-# This name can consist of any alphanumeric characters and these non-alphanumeric characters: '-', '_', '.', ' ', ','.
-# customerID: the IBM ID received by the customer upon purchasing a IBM Spectrum Scale license / or DEVLIC (developer edition) or TRYBUY (test edition)
-# This can consist of any alphanumeric characters and these non-alphanumeric characters: '-', '_', '.'.
-# companyEmail: a group or task e-mail address to be contacted by IBM Support
-# countryCode: two-letter uppercase country code in the ISO 3166-1 alpha-2 format (e.g. US for USA, DE for Germany).
-# type: Marks the cluster as a "test" or a "production" system. In case this parameter is not explicitly set, the value is set to "production" by default.
-# If a proxy should be used for uploads provide the following information / otherwise leave "#" in place to not use a proxy 
-#   host of proxy server as hostname or IP address
-#   port of proxy server
-#   secretName of a basic-auth secret, which contains username and password for proxy server
-#   Leave "#" if no authentication to the proxy server is needed.
+## By accepting Call Home you agree to allow IBM and its subsidiaries to store and use your contact information and your support information 
+## anywhere they do business worldwide. For more information, please refer to the Program license agreement and documentation.
+## For more information about call home, see https://www.ibm.com/docs/en/spectrum-scale/5.1.1?topic=overview-understanding-call-home.
+
+# OPTIONAL: To enable IBM Call Home support, accept the license, remove the first "#" character on each line below and provide the required information.
+# acceptLicense: If you agree, please respond with true for acceptance, else with false to decline (in this case call home will not be enabled)
+# companyName: Name of the company to which the contact person belongs.
+#              This name can consist of any alphanumeric characters and these non-alphanumeric characters: '-', '_', '.', ' ', ','.
+# customerID: The IBM ID received by the customer upon purchasing a IBM Spectrum Scale license / or DEVLIC (developer edition) or TRYBUY (test edition).
+#             This can consist of any alphanumeric characters and these non-alphanumeric characters: '-', '_', '.'.
+# companyEmail: A group or task e-mail address to be contacted by IBM Support.
+# countryCode: A two-letter uppercase country code in the ISO 3166-1 alpha-2 format (e.g. US for USA, DE for Germany).
+# type: Marks the cluster as a "test" or a "production" system. In case this parameter is not explicitly set, "production" is used by default.
+# If a proxy server should be used for uploads please provide the following information. Leave whole block commented out with "#" to not use a proxy. 
+#   host: proxy server hostname or IP address
+#   port: port of proxy server
+#   secretName: Name of a basic-auth secret containg "username" and "password" for the proxy server. Leave commented out with "#" if no authentication for the proxy is required.
 callHome:
-#  acceptLicense: true
+  acceptLicense: false
 #  companyName: "company"
 #  customerID: "123456-kl"
 #  companyEmail: "smith@email"
-#  countryCode: "de"
+#  countryCode: "DE"
 #  type: production | test
 #  proxy:
 #    host: "192.1.1.1"
@@ -143,6 +147,7 @@ callHome:
 ## ---------------------------------------
 ##  IBM Spectrum Scale CNSA: Host Aliases
 ## ---------------------------------------
+## https://www.ibm.com/docs/en/scalecontainernative?topic=operator-custom-resource
 
 # OPTIONAL: hostAliases for environments where DNS cannot resolve the nodes of the remote IBM Spectrum Scale storage cluster. Uncomment and replicate list items to add more aliases.
 hostAliases:
@@ -152,6 +157,7 @@ hostAliases:
 ## ------------------------------------------------------
 ##  IBM Spectrum Scale CNSA: Node Selector Configuration
 ## ------------------------------------------------------
+## https://www.ibm.com/docs/en/scalecontainernative?topic=operator-selectors-labels 
 
 # REQUIRED: nodeSelector ensures to deploy IBM Spectrum Scale CNSA pods on nodes only matching the following node labels
 # The Operator will check that a node has all labels defined present in order to deploy IBM Spectrum Scale CNSA pods on this node.
@@ -162,6 +168,9 @@ nodeSelector:
 ## ----------------------------------
 ##  IBM Spectrum Scale CNSA: Profile
 ## ----------------------------------
+## https://www.ibm.com/docs/en/scalecontainernative?topic=operator-deployment-preparations
+
+# Supported IBM Spectrum Scale configuration parameters set by default via the Operator. 
 profile:
   pagepool:                           "1G"
   ignorePrefetchLUNCount:             "yes"
@@ -179,31 +188,38 @@ profile:
 ## -----------------------------------------------------
 ##  IBM Spectrum Scale CSI: Node Selector Configuration
 ## -----------------------------------------------------
+## https://www.ibm.com/docs/en/spectrum-scale-csi?topic=operator-using-node-selector
 
 # The IBM Spectrum Scale CSI Operator will check that a node has all the labels defined below in order to deploy IBM Spectrum Scale CSI pods on this node.
-# REQUIRED: csiNodeSelectorBase "scale: true" is the default node label for deploying Spectrum Scale CSI pods on a node (DEFAULT / leave as is)
+# REQUIRED: csiNodeSelectorBase "scale: true" is the default node label for deploying IBM Spectrum Scale CSI pods on a node. Leave as is for the default.
 csiNodeSelectorBase:
   key:    "scale"
   value:  "true"
 # OPTIONAL: csiNodeSelectorProvisioner is an additional node label to run the IBM Spectrum Scale CSI Provisioner pods
-# on a specifc subset of CSI nodes (highly reliable OpenShift infrastructure nodes), e.g. key: "infranode", value: "1"
+# on a specifc subset of CSI nodes (highly reliable OpenShift infrastructure nodes), e.g. key: "infranode", value: "1".
 # Set only if required. Otherwise set key: "" to be ignored.
 csiNodeSelectorProvisioner:
   key:    ""
   value:  ""
 # OPTIONAL: csiNodeSelectorAttacher is an additional node label to run the IBM Spectrum Scale CSI Attacher pods
-# on a specifc subset of CSI nodes (highly reliable OpenShift infrastructure nodes), e.g. key: "infranode", value: "2"
+# on a specifc subset of CSI nodes (highly reliable OpenShift infrastructure nodes), e.g. key: "infranode", value: "2".
 # Set only if required. Otherwise set key: "" to be ignored.
 csiNodeSelectorAttacher:
+  key:    ""
+  value:  ""
+# OPTIONAL: csiNodeSelectorSnapshotter is an additional node label to run the IBM Spectrum Scale CSI Snapshotter pods
+# on a specifc subset of CSI nodes (highly reliable OpenShift infrastructure nodes), e.g. key: "infranode", value: "3".
+# Set only if required. Otherwise set key: "" to be ignored.
+csiNodeSelectorSnapshotter:
   key:    ""
   value:  ""
 
 ## ---------------------------------------------------
 ##  IBM Spectrum Scale CSI: Tolerations Configuration
 ## ---------------------------------------------------
-# https://www.ibm.com/docs/en/spectrum-scale-csi?topic=operator-tolerations
+## https://www.ibm.com/docs/en/spectrum-scale-csi?topic=operator-tolerations
 
-# OPTIONAL: csiTolerations is an array of Kubernetes tolerations distribued to IBM Spectrum Scale CSI pods
+# OPTIONAL: csiTolerations is an array of Kubernetes tolerations distribued to IBM Spectrum Scale CSI pods.
 # https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
 csiTolerations:
 #  - key: "key1"
@@ -222,7 +238,7 @@ csiTolerations:
 ## --------------------------------------
 # https://www.ibm.com/docs/en/spectrum-scale-csi?topic=operator-kubernetes-spectrum-scale-node-mapping
 
-# OPTIONAL: csiNodeMapping is an array of node mappings in case K8s node names (oc get nodes) differ from SpectrumScale node names (mmlscluster)
+# OPTIONAL: csiNodeMapping is an array of node mappings in case K8s node names (oc get nodes) differ from SpectrumScale node names (mmlscluster).
 # In case a K8s node name starts with a number (e.g. "198.51.100.10") then use "K8sNodePrefix_< K8s Node Name >" 
 # as format for the k8sNode name (e.g. "K8sNodePrefix_198.51.100.10")
 csiNodeMapping:

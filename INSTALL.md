@@ -7,6 +7,7 @@
 - [Requirements](#requirements)
 - [Repository structure](#repository-structure)
 - [Preinstallation tasks](#preinstallation-tasks)
+  - [Add IBM Cloud Container Registry entitlement to OpenShift global cluster pull secret](#add-ibm-cloud-container-registry-entitlement-to-openshift-global-cluster-pull-secret)
   - [Prepare OpenShift worker nodes to run IBM Spectrum Scale](#prepare-openshift-worker-nodes-to-run-ibm-spectrum-scale)
   - [Label OpenShift worker nodes for IBM Spectrum Scale](#label-openshift-worker-nodes-for-ibm-spectrum-scale)
   - [Prepare remote IBM Spectrum Scale storage cluster](#prepare-remote-ibm-spectrum-scale-storage-cluster)
@@ -18,8 +19,9 @@
     - Create secret for IBM Spectrum Scale CNSA user credentials (remote cluster)
     - Create secrets for IBM Spectrum Scale CSI driver user credentials (remote & local cluster)
     - Verify access to the GUI of the remote IBM Spectrum Scale storage cluster
-  - [(STEP 2) Edit the config.yaml file to reflect your local environment](#step2)
+  - [(STEP 2) Edit the *config.yaml* file to reflect your local environment](#step2)
     - Minimum required configuration
+    - Extended configuration
     - Optional configuration parameters
       - Call home (optional)
       - Hostname aliases (optional)
@@ -32,7 +34,7 @@
   - Specify node labels for IBM Spectrum Scale CNSA (optional)
   - Specify node labels for IBM Spectrum Scale CSI driver (optional)
   - Specify pod tolerations for IBM Spectrum Scale CSI driver (optional)
-  - Specify node mapping for IBM Spectrum Scale CSI driver (optional)
+  - Specify node mappings for IBM Spectrum Scale CSI driver (optional)
 
 
 ## Abstract
@@ -76,28 +78,32 @@ with the regular pre-requisites for IBM Spectrum Scale CNSA and CSI driver as de
 
 * Meet the official [Hardware and software requirements](https://www.ibm.com/docs/en/scalecontainernative?topic=planning-hardware-software-requirements).
 * A Red Hat OpenShift Container Platform cluster, version 4.6.6 (or higher minor version) or 4.7 (recommended) with a minimum configuration 
-  of three master nodes and three worker nodes (and a supported maximum of 128 worker nodes).
+  of *three* master nodes and *three* worker nodes (and a supported maximum of 128 worker nodes).
 * The new *volume snapshot* functionality in IBM Spectrum Scale CSI driver v2.2.0 requires Red Hat OpenShift 4.7 and IBM Spectrum Scale version 5.1.1.0 as minimum versions.
-* An IBM Spectrum Scale *storage* cluster with IBM Spectrum Scale version 5.1.1.x (ideally 3 nodes or more) with an IBM Spectrum Scale GUI 
-  to provide an IBM Spectrum Scale file system that will be mounted as a remote file system (or as a *cross-cluster mount*) 
-  in the local IBM Spectrum Scale CNSA *compute* cluster on the OpenShift worker nodes. 
-  When you are upgrading the remote storage cluster to 5.1.1.x, run `mmchfs -V compat` to retain accessibility of the file system from the IBM Spectrum Scale CNSA compute cluster.
-  Note that all nodes of the local compute and remote storage cluster need to be able to communicate over the 
+* An IBM Spectrum Scale *storage* cluster running IBM Spectrum Scale version 5.1.0.3 or higher (ideally a minimum of 3 nodes) 
+  with IBM Spectrum Scale GUI to provide a REST API for IBM Spectrum Scale CNSA and CSI driver.
+  The *storage* cluster provides an IBM Spectrum Scale file system that backs the persistent storage in OpenShift. This file system 
+  is mounted through a *remote mount* (also referred to as *cross-cluster mount*) on the local IBM Spectrum Scale CNSA *compute* cluster 
+  and the OpenShift worker nodes as a clustered parallel file system.
+  Note that all nodes of the local *compute* and remote *storage* cluster need to be able to communicate over the 
   IBM Spectrum Scale *daemon* network with each other (this is a prerequisite for the remote mount).
+* IBM Spectrum Scale CNSA v5.1.1.1 supports IBM Spectrum Scale file system versions V24.00 (5.1.0.0) and V25 (5.1.1.0) for the remote mount (`mmlsfs <fs name> -V`.
+  Should you upgrade the remote storage cluster beyond 5.1.1.x at some point, make sure to stay at a supported version of the file system
+  for the remote mount by making use of `mmchfs <fs name> -V compat` to retain accessibility from the IBM Spectrum Scale CNSA compute cluster.
 * Access to the IBM Cloud Container Registry is required, 
   see [Accessing IBM Cloud Container Registry](https://www.ibm.com/docs/en/scalecontainernative?topic=installation-accessing-cloud-container-registry),
   with an *entitlement key* for either *IBM Spectrum Scale Data Access Edition* or *IBM Spectrum Scale Data Management Edition*
   so that the *IBM Spectrum Scale Container Native Storage Access* operator can automatically pull the required images from the IBM Cloud Container Registry (icr.io). 
-* Modify the OpenShift global pull secrets to contain the credentials (entitled registry user & entitlement key) for accessing the IBM Cloud Container Registry.
+* Modify the OpenShift *global pull secrets* to contain the credentials (entitled registry user: "**cp**" & your **entitlement key**) for accessing the IBM Cloud Container Registry.
   See [Red Hat OpenShift Container Platform global pull secret](https://www.ibm.com/docs/en/scalecontainernative?topic=installation-red-hat-openshift-container-platform-global-pull-secret)
-  for instructions. Note that the updated config will be rolled out to all nodes in the OpenShift cluster one at a time. On OpenShift 4.6
-  nodes will not be schedulable before rebooting. On OpenShift 4.7 and above nodes do not need to reboot. Also see 
+  for instructions. Note that the updated config will be rolled out to all nodes in the OpenShift cluster one at a time and on OpenShift 4.6
+  nodes will not be schedulable before rebooting. On OpenShift 4.7 and above the nodes do not need to reboot. Also see 
   [Updating the global cluster pull secret](https://docs.openshift.com/container-platform/4.7/openshift_images/managing_images/using-image-pull-secrets.html#images-update-global-pull-secret_using-image-pull-secrets). 
 * Transport Layer Security (TLS) verification is used to guarantee secure HTTPS communication with the storage cluster GUI 
-  by verifying the server's certificate chain and host name. Prepare for one of the three options described in
+  by verifying the server's certificate chain and host name. Prepare for one of the *three* options described in
   [Configure Certificate Authority (CA) certificates for storage cluster](https://www.ibm.com/docs/en/scalecontainernative?topic=installation-configure-certificate-authority-ca-certificates-storage-cluster).
-  Note that the storage cluster verification can be skipped (e.g. for PoCs, demos) by setting *insecureSkipVerify* option *true*, see 
-  [Edit the config.yaml file to reflect your local environment](#step2).
+  Note that the storage cluster verification can be skipped (e.g. for PoCs, demos) by setting *insecureSkipVerify* option to *true*, see 
+  [Edit the config.yaml file to reflect your local environment](#step2). This is the default used in the Helm chart deployment for PoCs. Recommended setting is *false*. 
 * Clone the official [IBM Spectrum Scale CNSA v5.1.1.1 release](https://github.com/IBM/ibm-spectrum-scale-container-native/tree/v5.1.1.1) from the public Github repository.  
 * Clone [this](https://github.com/IBM/ibm-spectrum-scale-container-native-helm/tree/v5.1.1.1-v2.2.0) Github repository to your local installation node. 
 * *helm* v3 (or higher) needs to be installed on the local installation node, see [Installing Helm](https://helm.sh/docs/intro/install/) to apply the Helm charts.
@@ -191,7 +197,80 @@ Be sure to perform all pre-installation tasks for the IBM Spectrum Scale CNSA an
   to configure the remote storage cluster, for example, by setting the following options accordingly: 
   `-Q/quota`, `--perfileset-quota`, `--filesetdf`, `enforceFilesetQuotaOnRoot`, `controlSetxattrImmutableSELinux`.
 
-### Prepare OpenShift worker nodes to run IBM Spectrum Scale CNSA
+### Add IBM Cloud Container Registry entitlement to OpenShift global cluster pull secret
+
+With IBM Spectrum Scale Container Native Storage Access version 5.1.1.1, the container images have moved to the *IBM Cloud Container Registry* (icr.io).
+You need to obtain an *entitlement key* from [IBM Container software library](https://myibm.ibm.com/products-services/containerlibrary) 
+using an IBM id and a password that is associated with the entitled software. 
+This *entitlement key* must be added to the *global cluster pull secret* of your OpenShift cluster 
+otherwise the IBM Spectrum Scale pods (except the operator) will fail to start due to image pull failures:
+```
+Failed to pull image "cp.icr.io/cp/spectrum/scale/ibm-spectrum-scale-core-init@sha256:a346f70d89755fe94143686d058e2e09698e4d6bb663df172befd91d54c7ffd6": 
+rpc error: code = Unknown desc = Requesting bear token: invalid status code from registry 400 (Bad Request)
+```
+Create a local file *authority.json* with the entitled user **cp** and your **entitlement key** as follows:
+```
+# cat authority.json 
+{
+  "auth": "< ENTER BASE64 ENCODED OUTPUT STRING OF (echo -n "cp:<password>" | base64 -w0) HERE >",
+  "username":"cp",
+  "password":"< ENTER YOUR ORIGINAL ENTITLEMENT KEY HERE >"
+}
+```
+An example *authority.json* file may look similar to
+```
+{
+  "auth": "Y3A6ZXl...T3ZIckk=",
+  "username":"cp",
+  "password":"eyJhbGc...KUnqLOvHrI"
+}
+```
+with
+```
+# echo -n "cp:eyJhbGc...KUnqLOvHrI" | base64 -w0
+Y3A6ZXl...T3ZIckk=
+```
+For the next step you need the `jq` command locally installed (`yum install jq`) 
+and access to the OpenShift cluster as cluster-admin with `oc` to read and modify the *global cluster pull secret*:
+```
+# oc get secret/pull-secret -n openshift-config -ojson | \
+jq -r '.data[".dockerconfigjson"]' | \
+base64 -d - | \
+jq '.[]."cp.icr.io" += input' - authority.json > temp_config.json
+```
+This first step will take the previously created *authority.json* file and include it 
+as a new authority in your *.dockerconfigjson* which will be stored in a local *temp_config.json* file.
+
+In a second step we update the *global cluster pull secret* of the OpenShift cluster with the contents of the *temp_config.json* file:
+```
+# oc set data secret/pull-secret -n openshift-config --from-file=.dockerconfigjson=temp_config.json
+```
+Note that the update will be rolled out to all nodes in the OpenShift cluster one at a time. On OpenShift 4.6
+nodes will become *not schedulable* (*NotReady,SchedulingDisabled*) in the process and reboot. 
+On OpenShift 4.7 and above the cluster nodes do not need to reboot to apply the update of the *global cluster pull secret*. 
+
+Your new pull-secret has been updated with your new authority. You can issue the following command to confirm your authority is present:
+```
+# oc get secret/pull-secret -n openshift-config -ojson | jq -r '.data[".dockerconfigjson"]' | base64 -d -
+{
+  "auths": {
+    [...]
+    "cp.icr.io": {
+      "auth": "Y3A6ZXl...T3ZIckk=",
+      "username": "cp",
+      "password": "eyJhbGc...KUnqLOvHrI"
+    [...]
+}
+```
+Be sure to delete both temporary files (*authority.json*, *temp_config.json*) from the local server as they contain your *entitlement key*.
+
+Please refer to
+- [Accessing IBM Cloud Container Registry](https://www.ibm.com/docs/en/scalecontainernative?topic=installation-accessing-cloud-container-registry),
+- [Red Hat OpenShift Container Platform global pull secret](https://www.ibm.com/docs/en/scalecontainernative?topic=installation-red-hat-openshift-container-platform-global-pull-secret)
+- [Updating the global cluster pull secret](https://docs.openshift.com/container-platform/4.7/openshift_images/managing_images/using-image-pull-secrets.html#images-update-global-pull-secret_using-image-pull-secrets)
+for more information.
+
+### Prepare OpenShift worker nodes to run IBM Spectrum Scale
 
 By applying the appropriate *Machine Config Operator* (MCO) settings we
 - increase the CRIO containerRuntimeConfig **pids_limit** to a minimum of `pidsLimit: 4096`
@@ -494,7 +573,7 @@ Make sure to specify the names of these *secrets* accordingly in the [*config.ya
 Note, the CSI driver user credentials on the *local* compute (CNSA) and *remote* storage cluster can be created and configured with *different* usernames and passwords
 and do not need to be identical!
 
-#### Verify access to the remote IBM Spectrum Scale storage cluster GUI
+#### Verify access to the GUI of the remote IBM Spectrum Scale storage cluster
 
 Before moving on it is a good idea to verify access to the GUI of the remote IBM Spectrum Scale storage cluster by running, for example, 
 ```
@@ -524,7 +603,7 @@ and *namespaces* (*ibm-spectrum-scale*, *ibm-spectrum-scale-csi-driver*) as sugg
 5. **primaryCluster.remote.clusterId**: Cluster ID of the remote IBM Spectrum Scale storage cluster.
 
 In this case you can directly move on to 
-[(STEP 3) Deploy the IBM Spectrum Scale CNSA Helm Chart](#step3) and [(STEP 4) Deploy the IBM Spectrum Scale CSI driver Helm Chart](#step3)
+[(STEP 3) Deploy the IBM Spectrum Scale CNSA Helm Chart](#step3) and [(STEP 4) Deploy the IBM Spectrum Scale CSI driver Helm Chart](#step4)
 and continue with the consecutive deployment of the two Helm charts.
 
 #### Extended configuration
@@ -590,7 +669,7 @@ See [Configure certificate authority (CA) certificates for storage cluster](http
 for more information about the available options. Also change *insecureSkipVerify* accordingly for your environment. 
 Here, the [config.yaml](config.yaml) file uses *true* as default to skip TLS verification for the limited scope of PoCs.
 
-The *contactNodes* are a list of remote storage cluster nodes (must be on the IBM Spectrum Scale *damon network*) to be contacted for the remote mount. 
+The *contactNodes* are a list of remote storage cluster nodes (must be on the IBM Spectrum Scale *daemon network*) to be contacted for the remote mount. 
 IBM Spectrum Scale CNSA will automatically pick 3 nodes if none are specified. 
 
 *Note:* If you stay with *cnsa-remote-gui-secret* as name for secret holding the IBM Spectrum Scale CNSA user credentials 
@@ -605,7 +684,7 @@ primaryCluster:
     guiHost:    "ibm-spectrum-scale-gui.<replace-with-CNSA-namespace>"
     secret:     "csi-local-secret"
   remote:
-    clusterId:  "2303539379337927823"
+    clusterId:  "215057217487177715"
     secret:     "csi-remote-secret"
 ```
 with:
@@ -623,7 +702,7 @@ We replace `<replace-with-CNSA-namespace>` in *local.guiHost* with the *namespac
 You can use *mmlscluster* or *curl* to obtain the *remote.clusterId* of the *remote* IBM Spectrum Scale storage cluster from the GUI endpoint:
 ```
 # curl -s -k https://remote-scale-gui.mydomain.com:443/scalemgmt/v2/cluster -u "csi_admin:csi_PASSWORD" | grep clusterId
-      "clusterId" : 2303539379337927879,
+      "clusterId" : 215057217487177715,
 ```
 
 *Note:* If you stay with defaults for the names of the local and remote CSI driver user secrets (*csi-local-secret*, *csi-remote-secret*) then 
@@ -911,7 +990,7 @@ The Helm chart resources of the **IBM Spectrum Scale CSI driver** deployment can
 ```
 with *ibm-spectrum-scale-csi* being the Helm chart release name and *-n ibm-spectrum-scale-csi-driver* referring to the CSI driver namespace.
 
-To completely remove IBM Spectrum Scale CSI you also have to remove its primary fileset *spectrum-scale-csi-volume-store* (default name) from the remote file system
+To completely remove IBM Spectrum Scale CSI driver you also have to remove its primary fileset *spectrum-scale-csi-volume-store* (default name) from the remote file system
 (here *ess3k_fs1*) on the remote storage cluster:
 ```
 # mmlsfileset ess3k_fs1 -L
@@ -1001,11 +1080,11 @@ These example manifests can be used for a quick sanity check after the successfu
 
 These examples comprise:
 * [*ibm-spectrum-scale-sc.yaml*](examples/ibm-spectrum-scale-sc.yaml): 
-  A *storage class* (SC) to allow dynamic provisioning of *persistent volumes* (PVs).
+  *storage class* (SC) to allow dynamic provisioning of *persistent volumes* (PVs)
 * [*ibm-spectrum-scale-pvc.yaml*](examples/ibm-spectrum-scale-pvc.yaml): 
-  A *persistent volume claim* (PVC) requesting a *persistent volume* (PV) from the *storage class* .
+  *persistent volume claim* (PVC) requesting a *persistent volume* (PV) from the *storage class* 
 * [*ibm-spectrum-scale-test-pod.yaml*](examples/ibm-spectrum-scale-test-pod.yaml): 
-  A *test pod* writing time stamps in 5-second intervals into the PV backed by IBM Spectrum Scale.
+  *test pod* writing 5-second time stamps into the PV backed by IBM Spectrum Scale
 
 The *storage class* (SC) for *dynamic provisioning* needs to be created by an OpenShift *cluster-admin* user.
 
@@ -1031,7 +1110,7 @@ metadata:
 provisioner: spectrumscale.csi.ibm.com
 parameters:
   volBackendFs: "<file system name on the local CNSA cluster, here: fs1>"
-  clusterId: "<cluster ID of the remote storage cluster, here: 2303539379337927879>"
+  clusterId: "<cluster ID of the remote storage cluster, here: 215057217487177715>"
   #uid: "1000"
   #gid: "1000"
   #inodeLimit: "1000000"
@@ -1051,7 +1130,7 @@ storageclass.storage.k8s.io/ibm-spectrum-scale-sc created
 NAME                          PROVISIONER                    RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
 ibm-spectrum-scale-sc         spectrumscale.csi.ibm.com      Delete          Immediate              false                  2s
 ```
-Now you can switch to a regular user profile in OpenShift, create a new namespace (for example)
+Now you can switch to a regular user profile in OpenShift, create a new namespace (optional - you can skip this step)
 ```
 # oc new-project test-namespace
 Now using project "test-namespace" on server "https://api.ocp4.scale.ibm.com:6443".
@@ -1080,7 +1159,7 @@ spec:
       storage: 1Gi
 ```
 You can increase the requested capacity in [*ibm-spectrum-scale-pvc.yaml*](examples/ibm-spectrum-scale-pvc.yaml) by setting `storage: 1Gi` 
-to the capacity needed, e.g. 100Gi. 
+to the capacity wanted, e.g. 100Gi. 
 
 Wait until the PVC is bound to a PV. A PVC (like a pod) is bound to a *namespace* in OpenShift (unlike a PV which is not a namespaced object).
 
@@ -1124,7 +1203,7 @@ root                             0              3        -- Mon May 11 20:19:22 
 pvc-87f18620-9fac-44ce-ad19-0def5f4304a1 1 524291         0 Mon Feb 15 12:56:11 2021        1                 1024           1024 Fileset created by IBM Container Storage Interface driver
 spectrum-scale-csi-volume-store  2        1048579         0 Tue Feb  9 23:19:02 2021        2              1048576          52224 Fileset created by IBM Container Storage Interface driver
 ```
-Be sure to *clean up* after this test and delete the test pod, persistent volume claim and storage class:
+Be sure to *clean up* after this test and delete the *test pod*, *persistent volume claim* and *storage class*:
 ```
 # oc delete -f examples/ibm-spectrum-scale-test-pod.yaml 
 pod "ibm-spectrum-scale-test-pod" deleted
@@ -1150,8 +1229,8 @@ spec:
   nodeSelector:
     node-role.kubernetes.io/worker: ""
 ```
-Regular node *labels* (in contrast to node *annotations*) can be used as *selectors* to select specific Kubernetes resources with that label, 
-e.g. in the default configuration IBM Spectrum Scale CNSA will be deployed on all OpenShift *worker* nodes which bear the regular OpenShift worker node label 
+Regular node *labels* (in contrast to node *annotations*) can be used as *selectors* to select specific Kubernetes resources with that label.
+In the default configuration IBM Spectrum Scale CNSA will be deployed on all OpenShift *worker* nodes which bear the regular OpenShift worker node label 
 *node-role.kubernetes.io/worker* as listed below: 
 ```
 # oc get nodes -l node-role.kubernetes.io/worker
@@ -1160,7 +1239,7 @@ worker01.ocp4.scale.ibm.com   Ready    worker   2d22h   v1.18.3+65bd32d
 worker02.ocp4.scale.ibm.com   Ready    worker   2d22h   v1.18.3+65bd32d
 worker03.ocp4.scale.ibm.com   Ready    worker   2d1h    v1.18.3+65bd32d
 ```
-Optionally, you can select only a *subset* of the OpenShift worker nodes to deploy IBM Spectrum Scale CNSA on by adding *labels* to the nodes and to the *nodeSelector* list. 
+Optionally, you can select a *subset* of the OpenShift worker nodes to deploy IBM Spectrum Scale CNSA on by adding *labels* to the nodes and to the *nodeSelector* list. 
 The IBM Spectrum Scale CNSA operator will check that a node has *all* labels defined in order to deem a node eligible to deploy IBM Spectrum Scale CNSA pods.
 
 For example, with the configuration below the IBM Spectrum Scale CNSA operator will deploy IBM Spectrum Scale CNSA pods only on nodes with both the 
@@ -1242,13 +1321,14 @@ csiNodeSelectorSnapshotter:
   key:    ""
   value:  ""
 ```
+Leave them empty ("") if you do not want to define an additional label.
 See [Using the node selector](https://www.ibm.com/docs/en/spectrum-scale-csi?topic=operator-using-node-selector) for more information.
 
 Note that the set of nodes with IBM Spectrum Scale CSI driver label (*scale=true*) should be identical to or a subset of all the nodes 
 running IBM Spectrum Scale CNSA. The nodes with an optionally defined CSI *attacher*, *provisioner* or *snapshotter* label 
 need to be a subset of the nodes with an IBM Spectrum Scale CSI driver (or *plugin*) label (*scale=true*).
 
-### Specify pod tolerations for IBM Spectrum Scale CSI (optional)
+### Specify pod tolerations for IBM Spectrum Scale CSI driver (optional)
 
 You can also specify Kubernetes *tolerations* in the [config.yaml](config.yaml) file that will be applied to IBM Spectrum Scale CSI driver pods. 
 ```
@@ -1268,23 +1348,21 @@ csiTolerations:
 See [Tolerations](https://www.ibm.com/docs/en/spectrum-scale-csi?topic=operator-tolerations) and
 [Taints and Tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration) for more information.
 
-### Specify node mappings for IBM Spectrum Scale CSI (optional)
+### Specify node mappings for IBM Spectrum Scale CSI driver (optional)
 
-If OpenShift/Kubernetes node names differ from the IBM Spectrum Scale node names you can need to configure a node name mapping of the OpenShift/Kubernetes node names
+If OpenShift/Kubernetes node names differ from the IBM Spectrum Scale node names you need to configure a node name mapping of the OpenShift/Kubernetes node names
 to the respective IBM Spectrum Scale node names which you can specify in the [config.yaml](config.yaml) file as follows:
 ```
 # OPTIONAL: csiNodeMapping is an array of node mappings in case K8s node names (oc get nodes) differ from SpectrumScale node names (mmlscluster)
 # In case a K8s node name starts with a number (e.g. "198.51.100.10") then use "K8sNodePrefix_< K8s Node Name >" 
 # as format for the k8sNode name (e.g. "K8sNodePrefix_198.51.100.10")
 csiNodeMapping:
-  - k8sNode: "< K8s Node Name >"
-    spectrumscaleNode: "< SpectrumScale Node Name >"
-  - k8sNode: "< K8s Node Name >"
-    spectrumscaleNode: "< SpectrumScale Node Name >"
-  - k8sNode: "K8sNodePrefix_< K8s Node Name >"
-    spectrumscaleNode: "< SpectrumScale Node Name >"
-  - k8sNode: "K8sNodePrefix_< K8s Node Name >"
-    spectrumscaleNode: "< SpectrumScale Node Name >"
+  - k8sNode: "worker01.ocp4.scale.ibm.com"
+    spectrumscaleNode: "scale01.bda.scale.ibm.com"
+  - k8sNode: "worker02.ocp4.scale.ibm.com"
+    spectrumscaleNode: "scale02.bda.scale.ibm.com"
+  - k8sNode: "K8sNodePrefix_10.10.1.18"
+    spectrumscaleNode: "scale03.bda.scale.ibm.com"
 ```
 See [*Kubernetes to IBM Spectrum Scale node mapping*](https://www.ibm.com/docs/en/spectrum-scale-csi?topic=operator-kubernetes-spectrum-scale-node-mapping)
 for more information.

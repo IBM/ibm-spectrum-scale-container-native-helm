@@ -207,15 +207,6 @@ profile:
 ##  IBM SPECTRUM SCALE CNSA PACKAGE CONFIGURATION ##
 ####################################################
 
-## -----------------------------------------------------
-##  IBM Spectrum Scale CNSA: Image Registry Pull Secret
-## -----------------------------------------------------
-
-# Reference to a local imagePullSecret name referenced in the operator and core service accounts
-# The imagePullSecret will not be added to the service accounts if pullSecret is set to "".
-imageRegistry:
-  pullSecret: spectrumscale-registrykey
-
 ## -------------------------------------------
 ##  IBM Spectrum Scale CNSA: Container Images
 ## -------------------------------------------

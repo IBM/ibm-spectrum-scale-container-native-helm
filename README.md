@@ -1,6 +1,6 @@
-# ibm-spectrum-scale-container-native-helm
-HELM charts to assist with IBM Spectrum Scale® container native and CSI driver installations on Red Hat® OpenShift®
+# IBM Spectrum Scale Container Native - Helm
 
+HELM charts to assist with IBM Spectrum Scale® Container Native and CSI driver installations on Red Hat® OpenShift®
 
 ## Abstract
 

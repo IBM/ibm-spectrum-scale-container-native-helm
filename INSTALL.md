@@ -632,7 +632,7 @@ primaryCluster:
     clusterId:  "2303539379337927823"                       <<(5)>> EDIT HERE (primaryCluster.remote.clusterId)
     secret:     "csi-remote-secret"
 ```
-If these minimum required setting meet your needs than you can directly move on to 
+If these minimum required settings meet your needs than you can directly move on to 
 [(STEP 3) Deploy the IBM Spectrum Scale CNSA Helm Chart](#step3) and [(STEP 4) Deploy the IBM Spectrum Scale CSI driver Helm Chart](#step4)
 and continue with the consecutive deployment of the two Helm charts.
 

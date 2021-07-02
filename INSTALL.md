@@ -602,7 +602,37 @@ and *namespaces* (*ibm-spectrum-scale*, *ibm-spectrum-scale-csi-driver*) as sugg
 4. **primaryCluster.local.guiHost**: Service name of the local IBM Spectrum Scale CNSA GUI as "ibm-spectrum-scale-gui.*CNSA-namespace*", here "ibm-spectrum-scale-gui.ibm-spectrum-scale".
 5. **primaryCluster.remote.clusterId**: Cluster ID of the remote IBM Spectrum Scale storage cluster.
 
-In this case you can directly move on to 
+These configuration options are reflected in the following sections in the [*config.yaml*](config.yaml) file:
+```
+# REQUIRED: User must accept the IBM Spectrum Scale license to deploy a CNSA cluster. 
+license:
+    accept: false                                           <<(1)>> EDIT HERE (license.accept)
+    license: data-access
+
+# REQUIRED: The primaryFilesystem section refers to the local file system mounted from a remote storage cluster.
+primaryFilesystem:
+  name:           "fs1"
+  mountPoint:     "/mnt/fs1"
+  storageFs:      "ess_fs1"                                 <<(2)>> EDIT HERE (primaryFilesystem.storageFs)
+
+# REQUIRED: The primaryRemoteStorageCluster section refers to the remote storage cluster.
+primaryRemoteStorageCluster:
+  gui:
+    host:               "remote-scale-gui.mydomain.com"     <<(3)>> EDIT HERE (primaryRemoteStorageCluster.gui.host)
+    secretName:         "cnsa-remote-gui-secret"
+    insecureSkipVerify: true
+
+# REQUIRED: primaryCluster is the local IBM Spectrum Scale CNSA cluster that will mount the primary file system and store IBM Spectrum Scale CSI driver configuration data.
+primaryCluster:
+  local:
+    clusterId:  "needs-to-be-read-after-CNSA-deployment"   
+    guiHost:    "ibm-spectrum-scale-gui.<replace-with-CNSA-namespace>"   <<(4)>> EDIT HERE (primaryCluster.local.guiHost)
+    secret:     "csi-local-secret"
+  remote:
+    clusterId:  "2303539379337927823"                       <<(5)>> EDIT HERE (primaryCluster.remote.clusterId)
+    secret:     "csi-remote-secret"
+```
+If these minimum required setting meet your needs than you can directly move on to 
 [(STEP 3) Deploy the IBM Spectrum Scale CNSA Helm Chart](#step3) and [(STEP 4) Deploy the IBM Spectrum Scale CSI driver Helm Chart](#step4)
 and continue with the consecutive deployment of the two Helm charts.
 

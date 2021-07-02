@@ -39,8 +39,8 @@ Note, that these Helm charts do _not support_ any lifecycle management of IBM Sp
 especially, the `helm upgrade|rollback|uninstall` features are _not supported_ and are not expected to work. You need to follow the offcial IBM documentation to perform
 any changes or upgrades to the deployment.
 
-Future releases of IBM Spectrum Scale Container Native Storage Access (CNSA) and IBM Spectrum Scale CSI driver may come with different packaging and deployment options 
-and no longer be suitable for a Helm chart deployment at which point this Helm chart will be discontinued.
+Future releases of IBM Spectrum Scale Container Native Storage Access (CNSA) and IBM Spectrum Scale CSI driver may come with different packaging and deployment options
+or upgrade strategies and may no longer be suitable for a Helm chart deployment at which point this Helm chart will be discontinued.
 
 This repository also provides a directory [(examples)](examples/) with some sample YAML manifests 
 
@@ -63,11 +63,10 @@ Once all prerequisites are met the deployment only requires the following steps:
  - Create the necessary namespaces, secrets and IBM Spectrum Scale CNSA/CSI user accounts  
  - Edit the [*config.yaml*](config.yaml) file to reflect your local environment
  - Deploy the IBM Spectrum Scale CNSA Helm Chart (*ibm-spectrum-scale*)
-  -Deploy IBM Spectrum Scale CSI driver Helm Chart (*ibm-spectrum-scale-csi*)
+ - Deploy IBM Spectrum Scale CSI driver Helm Chart (*ibm-spectrum-scale-csi*)
 
 The overall configuration is greatly simplified by minimizing and unifying the set of common parameters needed for the 
-combined deployment of IBM Spectrum Scale CNSA and IBM Spectrum Scale CNSA CSI driver. It also allows to easily redirect 
-all image references to a private image registry without editing any individual YAML manifests manually. 
+combined deployment of IBM Spectrum Scale CNSA and IBM Spectrum Scale CNSA CSI driver.
 
 The step by step instructions for the deployment are described in detail in [*INSTALL.md*](INSTALL.md).
 

@@ -9,7 +9,7 @@
 # and IBM Spectrum Scale CSI driver version v2.2.0 for 
 # Proof of Concepts (PoCs), demos or any other form of evaluations
 # where no further lifecycle managment and upgrade paths are considered. 
-# They are explicitely not intended and not suported for 
+# They are explicitly not intended and not suported for 
 # any production use!
 # These Helm charts are not supported by the 
 # IBM Spectrum Scale container native nor CSI offerings 

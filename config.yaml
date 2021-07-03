@@ -10,7 +10,7 @@
 # and IBM Spectrum Scale CSI driver version v2.2.0 for 
 # Proof of Concepts (PoCs), demos or any other form of evaluations
 # where no further lifecycle managment and upgrade paths are considered. 
-# They are explicitely not intended and not suported for 
+# They are explicitly not intended and not suported for 
 # any production use!
 # These Helm charts are not supported by the 
 # IBM Spectrum Scale container native nor CSI offerings 
@@ -98,7 +98,7 @@ primaryCluster:
   remote:
     # REQUIRED: clusterId is the cluster ID of the remote IBM Spectrum Scale storage cluster if primaryFs is a remotely mounted file system from a remote storage cluster.
     # REQUIRED: secret is the name of the Kubernetes secret with username/password for CSI driver user to access the GUI on the remote IBM Spectrum Scale storage cluster.
-    clusterId:  "2303539379337927823"
+    clusterId:  "215057217487177715"
     secret:     "csi-remote-secret"
     # OPTIONAL: secureSslMode can be set to true or false. Default is false. If set to true cacert must be configured! 
     # OPTIONAL: cacert is the name of CA certificate configmap for accessing the GUI of the remote IBM Spectrum Scale storage cluster. It is ignored if set to "".

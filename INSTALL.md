@@ -480,7 +480,7 @@ If no user for IBM Spectrum Scale CNSA exists in the *ContainerOperator*  group
 ```
 then create one as follows:
 ```
-# /usr/lpp/mmfs/gui/cli/mkuser cnsa_admin -p cnsa_PASSWORD -g ContainerOperator
+# /usr/lpp/mmfs/gui/cli/mkuser cnsa_admin -p cnsa_PASSWORD -g ContainerOperator [-e 1]
 ```
 This user will later be used by *IBM Spectrum Scale CNSA* through the `cnsa-remote-gui-secret` secret.
 
@@ -506,7 +506,7 @@ If no user for the CSI driver exists in the *CsiAdmin*  group
 ```
 create one as follows:
 ```
-# /usr/lpp/mmfs/gui/cli/mkuser csi_admin -p csi_PASSWORD -g CsiAdmin
+# /usr/lpp/mmfs/gui/cli/mkuser csi_admin -p csi_PASSWORD -g CsiAdmin [-e 1]
 ```
 This user will later be used by the *IBM Spectrum Scale CSI driver* through the `csi-remote-secret` secret.
 
@@ -547,6 +547,8 @@ Create a Kubernetes *secret* in the CNSA namespace holding the user credentials 
 ```
 # oc create secret generic cnsa-remote-gui-secret  --from-literal=username='cnsa_admin' --from-literal=password='cnsa_PASSWORD' -n ibm-spectrum-scale
 ```
+Note, you can skip this step if you specify the credentials in the [*config.yaml*](config.yaml) instead. In this case the Helm chart will create the secret for you.
+However, having plain text passwords in this config file is _not_ considered best practice for security reasons and therefore not recommended! 
 
 #### Create secrets for IBM Spectrum Scale CSI driver user credentials (remote & local cluster)
 
@@ -570,8 +572,11 @@ We will later use these credentials when creating the CSI admin user on the GUI 
 
 Make sure to specify the names of these *secrets* accordingly in the [*config.yaml*](config.yaml) file in the next step.
 
-Note, the CSI driver user credentials on the *local* compute (CNSA) and *remote* storage cluster can be created and configured with *different* usernames and passwords
+Note, the CSI driver user credentials on the *local* compute (CNSA) and *remote* storage cluster *can* be created and configured with *different* usernames and passwords
 and do not need to be identical!
+
+Note, you can skip this step if you specify the credentials in the [*config.yaml*](config.yaml) instead. In this case the Helm chart will create the secrets for you.
+However, having plain text passwords in this config file is _not_ considered best practice for security reasons and therefore not recommended!
 
 #### Verify access to the GUI of the remote IBM Spectrum Scale storage cluster
 

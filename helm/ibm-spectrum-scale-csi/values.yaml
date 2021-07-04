@@ -57,6 +57,27 @@
 # OPTIONAL: csiNamespace is the namespace to deploy CSI driver in. If undefined ("") the release namespace of the Helm chart will be used for CSI driver.
 csiNamespace: ""
 
+## -------------------------------------------
+##  IBM Spectrum Scale: Credentials & Secrets
+## -------------------------------------------
+
+# OPTIONAL: The secrets must either have been created manually prior to installation (recommended - in this case skip this section) 
+#           or can be created through the Helm chart by setting createSecrets to true and providing all required credentials
+#           in the section below.
+# Note: Having plain text passwords in this config file is _not_ considered best practice for security reasons and therefore not recommended!
+primarySecrets:
+  # No secrets will be created through the Helm chart if createSecrets is set to false (default)!
+  createSecrets: false
+  csiGuiUser:
+    # IBM Spectrum Scale CSI driver user credentials on local compute/CNSA cluster GUI (csi-local-secret)
+    local:
+      username: "csi_admin1"
+      password: "csi_PASSWORD1"
+    # IBM Spectrum Scale CSI driver user credentials on remote storage cluster GUI (csi-remote-secret)
+    remote:
+      username: "csi_admin2"
+      password: "csi_PASSWORD2"
+
 ## -----------------------------------------------------------
 ##  IBM Spectrum Scale CSI: Primary File System Configuration
 ## -----------------------------------------------------------
@@ -84,7 +105,7 @@ primaryCluster:
     # REQUIRED: clusterId is the cluster ID of the remote IBM Spectrum Scale storage cluster if primaryFs is a remotely mounted file system from a remote storage cluster.
     # REQUIRED: secret is the name of the Kubernetes secret with username/password for CSI driver user to access the GUI on the remote IBM Spectrum Scale storage cluster.
     # REQUIRED: guiHost is the FQDN or IP address of the GUI host for the remote IBM Spectrum Scale storage cluster. CNSA configuration will be applied here automatically.
-    clusterId:  "2303539379337927823"
+    clusterId:  "215057217487177715"
     secret:     "csi-remote-secret"
     guiHost:    "my-scale-gui.mydomain.com"
     # OPTIONAL: secureSslMode can be set to true or false. Default is false. If set to true cacert must be configured! 

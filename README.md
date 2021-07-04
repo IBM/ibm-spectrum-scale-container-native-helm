@@ -65,8 +65,8 @@ for the combined deployment of *IBM Spectrum Scale CNSA* and *IBM Spectrum Scale
 Once all prerequisites are met the Helm chart deployment only requires the following steps:
 1. Create the necessary *namespaces*, *secrets* and IBM Spectrum Scale CNSA/CSI *user accounts*  
 2. Edit the [*config.yaml*](config.yaml) file to reflect your local configuration
-3. Deploy the IBM Spectrum Scale CNSA Helm Chart (*ibm-spectrum-scale*)
-4. Deploy the IBM Spectrum Scale CSI driver Helm Chart (*ibm-spectrum-scale-csi*)
+3. Deploy the IBM Spectrum Scale CNSA Helm Chart ([*ibm-spectrum-scale*](helm/ibm-spectrum-scale))
+4. Deploy the IBM Spectrum Scale CSI driver Helm Chart ([*ibm-spectrum-scale-csi*](helm/ibm-spectrum-scale-csi))
 
 The overall configuration is greatly simplified by minimizing and unifying the set of common parameters needed for the 
 combined deployment of IBM Spectrum Scale CNSA and IBM Spectrum Scale CSI driver.

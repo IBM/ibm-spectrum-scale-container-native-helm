@@ -45,7 +45,7 @@
 # Note: Having plain text passwords in this config file is _not_ considered best practice for security reasons and therefore not recommended!
 primarySecrets:
   # No secrets will be created through the Helm chart if createSecrets is set to false (default)!
-  createSecrets: true
+  createSecrets: false
   cnsaGuiUser:
     # IBM Spectrum Scale CNSA user credentials on remote storage cluster GUI (cnsa-remote-gui-secret)
     remote:

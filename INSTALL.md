@@ -908,6 +908,8 @@ Verify that the IBM Spectrum Scale CSI driver user *csi_admin* has access to the
 ```
 # oc exec <ibm-spectrum-scale-core-pod> -- curl -s -k https://ibm-spectrum-scale-gui.ibm-spectrum-scale/scalemgmt/v2/cluster -u "csi_admin:csi_PASSWORD"
 ```
+Note, that "https://ibm-spectrum-scale-gui.ibm-spectrum-scale/..." is composed of "https://ibm-spectrum-scale-gui.<namespace of IBM Spectrum Scale CNSA>"
+with the namespace of IBM Spectrum Scale CNSA being "ibm-spectrum-scale" in this example.
 
 (2) Obtain the cluster ID of the local IBM Spectrum Scale CNSA cluster.
 
@@ -1163,7 +1165,7 @@ parameters:
 reclaimPolicy: Delete
 ```
 You can ignore all other parameters in the storage class for now. 
-Please refer to [Storage Class*](https://www.ibm.com/docs/en/spectrum-scale-csi?topic=configurations-storage-class) to learn more about them.
+Please refer to [*Storage Class*](https://www.ibm.com/docs/en/spectrum-scale-csi?topic=configurations-storage-class) to learn more about them.
 
 Apply the *storage class* (SC) in OpenShift as user with a *cluster-admin* role: 
 ```

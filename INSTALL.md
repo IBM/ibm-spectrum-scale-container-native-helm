@@ -908,8 +908,8 @@ Verify that the IBM Spectrum Scale CSI driver user *csi_admin* has access to the
 ```
 # oc exec <ibm-spectrum-scale-core-pod> -- curl -s -k https://ibm-spectrum-scale-gui.ibm-spectrum-scale/scalemgmt/v2/cluster -u "csi_admin:csi_PASSWORD"
 ```
-Note, that "https://ibm-spectrum-scale-gui.ibm-spectrum-scale/..." is composed of "https://ibm-spectrum-scale-gui.<namespace of IBM Spectrum Scale CNSA>"
-with the namespace of IBM Spectrum Scale CNSA being "ibm-spectrum-scale" in this example.
+Note, that `https://ibm-spectrum-scale-gui.ibm-spectrum-scale/` is composed of `https://ibm-spectrum-scale-gui.<namespace of IBM Spectrum Scale CNSA>`
+  with the namespace of IBM Spectrum Scale CNSA being *ibm-spectrum-scale* in this example.
 
 (2) Obtain the cluster ID of the local IBM Spectrum Scale CNSA cluster.
 

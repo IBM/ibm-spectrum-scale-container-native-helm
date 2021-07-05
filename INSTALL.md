@@ -972,12 +972,51 @@ for more details.
 
 ## Remove IBM Spectrum Scale CNSA and CSI deployment
 
-To remove *IBM Spectrum Scale Container Native Storage Access* please follow instructions in
-- [Cleanup IBM Spectrum Scale CNSA](https://www.ibm.com/docs/en/scalecontainernative?topic=5103-cleanup)
+To remove *IBM Spectrum Scale Container Native Storage Access* and *IBM Spectrum Scale CSI driver* plugin please follow instructions in
+- [Cleaning up IBM Spectrum Scale CNSA](https://www.ibm.com/docs/en/scalecontainernative?topic=5111-cleanup)
 and 
-- [Cleaning up IBM Spectrum Scale Container Storage Interface driver](https://www.ibm.com/docs/en/spectrum-scale-csi?topic=installation-cleaning-up-spectrum-scale-container-storage-interface-driver-operator-by-using-clis).
+- [Cleaning up IBM Spectrum Scale Container Storage Interface driver](https://www.ibm.com/docs/en/spectrum-scale-csi?topic=cleanup-cleaning-up-spectrum-scale-container-storage-interface-driver-operator-by-using-clis).
 
-The Helm chart resources of the **IBM Spectrum Scale CNSA** deployment can be removed using
+When completely uninstalling the IBM Spectrum Scale CNSA and CSI driver deployment make sure that all applications stop using persistent storage provided by IBM Spectrum Scale 
+and verify that all related SC, PVC and PV objects are removed.
+
+Start with uninstalling the *IBM Spectrum Scale CSI driver* plugin first followed by *IBM Spectrum Scale CNSA*.
+
+(1) The Helm chart resources of the **IBM Spectrum Scale CSI driver** deployment can be removed using
+```
+# oc delete csiscaleoperators ibm-spectrum-scale-csi -n ibm-spectrum-scale-csi-driver
+# helm uninstall ibm-spectrum-scale-csi -n ibm-spectrum-scale-csi-driver
+# oc delete crd csiscaleoperators.csi.ibm.com
+# oc delete project ibm-spectrum-scale-csi-driver
+```
+with *ibm-spectrum-scale-csi* being the Helm chart release name and *-n ibm-spectrum-scale-csi-driver* referring to the CSI driver namespace.
+
+To completely remove IBM Spectrum Scale CSI driver you also have to remove its primary fileset *spectrum-scale-csi-volume-store* (default name) from the remote file system
+(here *ess3k_fs1*) on the remote storage cluster:
+```
+# mmlsfileset ess3k_fs1 -L
+Filesets in file system 'ess3k_fs1':
+Name                            Id      RootInode  ParentId Created                      InodeSpace      MaxInodes    AllocInodes Comment
+root                             0              3        -- Mon May 11 20:19:22 2020        0             15490304         500736 root fileset
+spectrum-scale-csi-volume-store  1         524291         0 Tue Jun  8 17:05:38 2021        1              1048576          52224 Fileset created by IBM Container Storage Interface driver
+
+# mmunlinkfileset ess3k_fs1 spectrum-scale-csi-volume-store
+Fileset spectrum-scale-csi-volume-store unlinked.
+
+# mmdelfileset ess3k_fs1 spectrum-scale-csi-volume-store -f
+Checking fileset ...
+Checking fileset complete.
+Deleting user files ...
+ 100.00 % complete on Wed Jun 30 14:59:19 2021  (     52224 inodes with total        204 MB data processed)
+Deleting fileset ...
+Fileset spectrum-scale-csi-volume-store deleted.
+```
+Finally, remove the *scale=true* label (and other labels that you may have configured additionally) from the worker nodes:
+```
+# oc label nodes -l scale=true scale-
+```
+
+(2) The Helm chart resources of the **IBM Spectrum Scale CNSA** deployment can be removed using
 ```
 # oc delete scalecluster ibm-spectrum-scale -n ibm-spectrum-scale
 # helm uninstall ibm-spectrum-scale -n ibm-spectrum-scale
@@ -1014,36 +1053,6 @@ Remove the IBM Spectrum Scale CNSA client cluster authorization by issuing:
 # mmauth delete ibm-spectrum-scale.ibm-spectrum-scale.ocp4.scale.ibm.com
 mmauth: Propagating the cluster configuration data to all affected nodes.
 mmauth: Command successfully completed
-```
-
-The Helm chart resources of the **IBM Spectrum Scale CSI driver** deployment can be removed using
-```
-# oc delete csiscaleoperators ibm-spectrum-scale-csi -n ibm-spectrum-scale-csi-driver
-# helm uninstall ibm-spectrum-scale-csi -n ibm-spectrum-scale-csi-driver
-# oc delete crd csiscaleoperators.csi.ibm.com
-# oc delete project ibm-spectrum-scale-csi-driver
-```
-with *ibm-spectrum-scale-csi* being the Helm chart release name and *-n ibm-spectrum-scale-csi-driver* referring to the CSI driver namespace.
-
-To completely remove IBM Spectrum Scale CSI driver you also have to remove its primary fileset *spectrum-scale-csi-volume-store* (default name) from the remote file system
-(here *ess3k_fs1*) on the remote storage cluster:
-```
-# mmlsfileset ess3k_fs1 -L
-Filesets in file system 'ess3k_fs1':
-Name                            Id      RootInode  ParentId Created                      InodeSpace      MaxInodes    AllocInodes Comment
-root                             0              3        -- Mon May 11 20:19:22 2020        0             15490304         500736 root fileset
-spectrum-scale-csi-volume-store  1         524291         0 Tue Jun  8 17:05:38 2021        1              1048576          52224 Fileset created by IBM Container Storage Interface driver
-
-# mmunlinkfileset ess3k_fs1 spectrum-scale-csi-volume-store
-Fileset spectrum-scale-csi-volume-store unlinked.
-
-# mmdelfileset ess3k_fs1 spectrum-scale-csi-volume-store -f
-Checking fileset ...
-Checking fileset complete.
-Deleting user files ...
- 100.00 % complete on Wed Jun 30 14:59:19 2021  (     52224 inodes with total        204 MB data processed)
-Deleting fileset ...
-Fileset spectrum-scale-csi-volume-store deleted.
 ```
 
 

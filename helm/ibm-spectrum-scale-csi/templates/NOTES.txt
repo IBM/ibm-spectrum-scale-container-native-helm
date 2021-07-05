@@ -25,6 +25,7 @@ The Helm chart and OpenShift resources of this deployment can be removed using:
 # helm uninstall {{ .Release.Name }} -n {{ .Release.Namespace }}
 # oc delete crd csiscaleoperators.csi.ibm.com
 # oc delete project {{ .Release.Namespace }}
+# oc label nodes -l {{ .Values.csiNodeSelectorBase.key }}={{ .Values.csiNodeSelectorBase.value }} {{ .Values.csiNodeSelectorBase.key }}-
 
 For more information please refer to the IBM Documentation at
 https://www.ibm.com/docs/en/spectrum-scale-csi?topic=spectrum-scale-container-storage-interface-driver-220

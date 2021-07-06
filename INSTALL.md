@@ -208,11 +208,11 @@ otherwise the IBM Spectrum Scale pods (except the operator) will fail to start d
 Failed to pull image "cp.icr.io/cp/spectrum/scale/ibm-spectrum-scale-core-init@sha256:a346f70d89755fe94143686d058e2e09698e4d6bb663df172befd91d54c7ffd6": 
 rpc error: code = Unknown desc = Requesting bear token: invalid status code from registry 400 (Bad Request)
 ```
-Create a local file *authority.json* with the entitled user **cp** and your **entitlement key** as follows:
+Create a local file *authority.json* with the entitled *user* **cp** and your **entitlement key** as *password*:
 ```
 # cat authority.json 
 {
-  "auth": "< ENTER BASE64 ENCODED OUTPUT STRING OF (echo -n "cp:<password>" | base64 -w0) HERE >",
+  "auth": "< ENTER BASE64 ENCODED OUTPUT STRING OF (echo -n "cp:<YOUR ENTITLEMENT KEY>" | base64 -w0) HERE >",
   "username":"cp",
   "password":"< ENTER YOUR ORIGINAL ENTITLEMENT KEY HERE >"
 }

@@ -231,45 +231,40 @@ csiImagePullSecrets:
 
 csiOperator:
   image:
-    # Scale CSI Operator image name (including full image registry path) and tag, e.g. "quay.io/ibm-spectrum-scale/ibm-spectrum-scale-csi-operator:v2.2.0"
-    # If tag is set to "" it defaults to the chart appVersion defined in Chart.yaml.
-    name: "quay.io/ibm-spectrum-scale/ibm-spectrum-scale-csi-operator"
-    tag:  ""
+    # Scale CSI Operator image name (including full image registry path) and tag (REQUIRED), 
+    # e.g. "quay.io/ibm-spectrum-scale/ibm-spectrum-scale-csi-operator:v2.2.0"
+    name: "quay.io/ibm-spectrum-scale/ibm-spectrum-scale-csi-operator:v2.2.0"
+    pullPolicy: IfNotPresent
 
 csiDriver:
   image:
-    # Scale CSI Driver image name (including full image registry path) and tag in case we do need to override the default image,
+    # Scale CSI Plugin/Driver image name (including full image registry path) and tag in case we do need to override the default image,
     # e.g. "quay.io/ibm-spectrum-scale/ibm-spectrum-scale-csi-driver:v2.2.0". Default values are used if name is set to "". 
     name: ""
-    tag:  "v2.2.0"
 
 csiAttacher:
   image:
     # Attacher image name (including full image registry path) and tag in case we do need to override the default image,
     # e.g. "us.gcr.io/k8s-artifacts-prod/sig-storage/csi-attacher:v3.1.0". Default values are used if name is set to "". 
     name: ""
-    tag:  "v3.1.0"
 
 csiProvisioner:
   image:
     # Provisioner image name (including full image registry path) and tag in case we do need to override the default image,
     # e.g. "us.gcr.io/k8s-artifacts-prod/sig-storage/csi-provisioner:v2.1.0". Default values are used if name is set to "".
     name: ""
-    tag:  "v2.1.0"
 
 csiDriverRegistrar:
   image:
     # Driver Registrar image name (including full image registry path) and tag in case we do need to override the default image,
     # e.g. "us.gcr.io/k8s-artifacts-prod/sig-storage/csi-node-driver-registrar:v2.1.0". Default values are used if name is set to "".
     name: ""
-    tag:  "v2.1.0"
 
 csiSnapshotter:
   image:
     # Snapshotter image name (including full image registry path) and tag in case we do need to override the default image,
     # e.g. "us.gcr.io/k8s-artifacts-prod/sig-storage/csi-snapshotter:v4.0.0". Default values are used if name is set to "".
     name: ""
-    tag:  "v4.0.0"
 
 ## -------------------------------------------------------------------------
 ##  IBM Spectrum Scale CNSA Variables for combinded deployment (CNSA & CSI)

@@ -40,9 +40,8 @@
 ## -------------------------------------------
 
 # OPTIONAL: The secrets must either have been created manually prior to installation (recommended - in this case skip this section) 
-#           or can be created through the Helm chart by setting createSecrets to true and providing all required credentials
-#           in the section below.
-# Note: Having plain text passwords in this config file is _not_ considered best practice for security reasons and therefore not recommended!
+#           or can be created through the Helm chart by setting createSecrets to true and providing all required credentials below.
+# WARNING:  Having plain text passwords in this config file is _not_ considered best practice for security reasons and not recommended!
 primarySecrets:
   # No secrets will be created through the Helm chart if createSecrets is set to false (default)!
   createSecrets: false

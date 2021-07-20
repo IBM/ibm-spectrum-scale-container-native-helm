@@ -74,7 +74,7 @@ To install
 [*IBM Spectrum Scale CNSA*](https://www.ibm.com/docs/en/scalecontainernative?topic=spectrum-scale-container-native-storage-access-5111) and 
 [*IBM Spectrum Scale CSI driver*](https://www.ibm.com/docs/en/spectrum-scale-csi?topic=spectrum-scale-container-storage-interface-driver-220) 
 with these Helm charts on Red Hat OpenShift 4.6 (or higher) the following requirements need to be met together
-with the regular pre-requisites for IBM Spectrum Scale CNSA and CSI driver as described in their respective official IBM Documentation. 
+with the regular pre-requisites for IBM Spectrum Scale CNSA and CSI driver as described in their respective official IBM Documentation:
 
 * Meet the official [Hardware and software requirements](https://www.ibm.com/docs/en/scalecontainernative?topic=planning-hardware-software-requirements).
 * A Red Hat OpenShift Container Platform cluster, version 4.6.6 (or higher minor version) or 4.7 (recommended) with a minimum configuration 
@@ -104,11 +104,11 @@ with the regular pre-requisites for IBM Spectrum Scale CNSA and CSI driver as de
   [Configure Certificate Authority (CA) certificates for storage cluster](https://www.ibm.com/docs/en/scalecontainernative?topic=installation-configure-certificate-authority-ca-certificates-storage-cluster).
   Note that the storage cluster verification can be skipped (e.g. for PoCs, demos) by setting *insecureSkipVerify* option to *true*, see 
   [Edit the config.yaml file to reflect your local environment](#step2). This is the default used in the Helm chart deployment for PoCs. Recommended setting is *false*. 
-* Clone the official [IBM Spectrum Scale CNSA v5.1.1.1 release](https://github.com/IBM/ibm-spectrum-scale-container-native/tree/v5.1.1.1) from the public Github repository.  
+* Clone the official [IBM Spectrum Scale CNSA v5.1.1.1 release](https://github.com/IBM/ibm-spectrum-scale-container-native/tree/v5.1.1.1) from the public Github repository to your local installation node.
 * Clone [this](https://github.com/IBM/ibm-spectrum-scale-container-native-helm/tree/v5.1.1.1-v2.2.0) Github repository to your local installation node. 
-* *helm* v3 (or higher) needs to be installed on the local installation node, see [Installing Helm](https://helm.sh/docs/intro/install/) to apply the Helm charts.
-* A cluster-wide admin user (*cluster-admin* role) is required for the deployment. The predefined `kube:admin` or `system:admin` accounts may suffice.
-  See the [note](#clusteradmin) below for more information on how to create a *regular* OpenShift cluster-admin user.
+* **helm v3** (or higher) needs to be installed on the local installation node, see [Installing Helm](https://helm.sh/docs/intro/install/) to apply the Helm charts.
+* A cluster-wide admin user (*cluster-admin* role) on OpenShift is required for the deployment. The predefined `kube:admin` or `system:admin` accounts do suffice.
+  See the [OPTIONAL NOTE](#clusteradmin) below for more information on how to create a *regular* OpenShift cluster-admin user.
 * Internet access is required for the deployment so all required images for IBM Spectrum Scale CNSA and CSI driver can be accessed on the worker nodes
   from their respective external image registries, e.g. icr.io, quay.io, us.gcr.io, docker.io, registry.access.redhat.com, etc.
   For a list of required container images and registries see 
@@ -121,7 +121,7 @@ with the regular pre-requisites for IBM Spectrum Scale CNSA and CSI driver as de
   for more information.
 
 <a name="clusteradmin"></a>
-Note: A production-ready Red Hat OpenShift cluster would have a properly configured *identity provider* and a regular *cluster-admin* user 
+*OPTIONAL NOTE* (not required for the deployment): A production-ready Red Hat OpenShift cluster would have a properly configured *identity provider* and a regular *cluster-admin* user 
 other than the default admin users like `kube:admin` or `system:admin` which are meant primarily as temporary accounts for the initial deployment
 and, for example, do not provide a token (`oc whoami -t`) to access and push images to the internal OpenShift image registry.
 The steps to create such an OpenShift cluster-admin user include 
@@ -129,10 +129,10 @@ The steps to create such an OpenShift cluster-admin user include
 (see [Configuring an HTPasswd identity provider](https://docs.openshift.com/container-platform/4.5/authentication/identity_providers/configuring-htpasswd-identity-provider.html))
 and
 2. Creating a regular admin user account with a *cluster-admin* role with 
+(see [Creating a cluster admin](https://docs.openshift.com/container-platform/4.5/authentication/using-rbac.html#creating-cluster-admin_using-rbac))
 ```
 # oc adm policy add-cluster-role-to-user cluster-admin <user-name>
 ```
-(see  [Creating a cluster admin](https://docs.openshift.com/container-platform/4.5/authentication/using-rbac.html#creating-cluster-admin_using-rbac)).
 
 
 ## Repository structure
@@ -517,7 +517,7 @@ in order to create a user with a never-expiring password.
 
 #### Prepare namespaces for IBM Spectrum Scale CNSA and CSI driver in OpenShift
 
-Log in to the OpenShift cluster as regular cluster admin user with a *cluster-admin* role to perform the next steps. 
+Log in to the OpenShift cluster as *cluster admin user* with a *cluster-admin* role to perform the next steps. 
 
 You need to create two *namespaces* (aka *projects*) in OpenShift: 
 * One for the *IBM Spectrum Scale CNSA* deployment, here we use **ibm-spectrum-scale** as name for the IBM Spectrum Scale CNSA namespace.
@@ -541,7 +541,7 @@ Alternatively, you can also use `oc create namespace <my-namespace>` which does 
 #### Create secret for IBM Spectrum Scale CNSA user credentials (remote cluster)
 
 IBM Spectrum Scale CNSA requires a GUI user account on the *remote* IBM Spectrum Scale storage cluster. 
-The credentials will be provided as *username* and *password* through a Kubernetes secret in the IBM Spectrum Scale CNSA namespace (here: *ibm-spectrum-scale*).
+The credentials will be provided as *username* and *password* through a Kubernetes secret in the **IBM Spectrum Scale CNSA namespace** (here: *ibm-spectrum-scale*).
 
 Create a Kubernetes *secret* in the CNSA namespace holding the user credentials from the CNSA GUI user on the *remote* IBM Spectrum Scale storage cluster: 
 ```
@@ -553,7 +553,7 @@ However, having plain text passwords in this config file is _not_ considered bes
 #### Create secrets for IBM Spectrum Scale CSI driver user credentials (remote & local cluster)
 
 IBM Spectrum Scale CSI driver requires a GUI user account on the *remote* IBM Spectrum Scale storage cluster and the *local* IBM Spectrum Scale CNSA compute cluster. 
-The credentials will be provided as *username* and *password* through Kubernetes secrets in the IBM Spectrum Scale CSI driver namespace (here: *ibm-spectrum-scale-csi-driver*).
+The credentials will be provided as *username* and *password* through Kubernetes secrets in the **IBM Spectrum Scale CSI driver namespace** (here: *ibm-spectrum-scale-csi-driver*).
 
 Create and label the Kubernetes *secret* in the CSI driver namespace holding the CSI driver user credentials  
 on the *remote* IBM Spectrum Scale *storage* cluster: 
@@ -584,7 +584,7 @@ Before moving on it is a good idea to verify access to the GUI of the remote IBM
 ```
 # curl -k -u 'csi_admin:csi_PASSWORD' https://<remote storage cluster GUI host>:443/scalemgmt/v2/cluster
 ```
-with the CSI user as well as the CNSA user credentials (from an admin node on the OpenShift cluster network).
+with the IBM Spectrum Scale *CSI user* as well as the *CNSA user* credentials (from an admin node on the OpenShift cluster network).
 
 This ensures that the user credentials are correct and that the nodes on the OpenShift network will have access to the remote IBM Spectrum Scale storage cluster.
 
@@ -604,7 +604,7 @@ and *namespaces* (*ibm-spectrum-scale*, *ibm-spectrum-scale-csi-driver*) as sugg
 1. **license.accept**: You need to set this to *true* to agree to the terms and conditions of the IBM Spectrum Scale license .
 2. **primaryFilesystem.storageFs**: Device name of the file system on the remote IBM Spectrum Scale storage cluster used for the remote mount.
 3. **primaryRemoteStorageCluster.gui.host**: Name (FQDN) or IP address of the GUI host for the remote IBM Spectrum Scale storage cluster.
-4. **primaryCluster.local.guiHost**: Service name of the local IBM Spectrum Scale CNSA GUI as "ibm-spectrum-scale-gui.*CNSA-namespace*", here "ibm-spectrum-scale-gui.ibm-spectrum-scale".
+4. **primaryCluster.local.guiHost**: Name of the local IBM Spectrum Scale CNSA GUI service as "ibm-spectrum-scale-gui.**CNSA-namespace**", here "ibm-spectrum-scale-gui.ibm-spectrum-scale".
 5. **primaryCluster.remote.clusterId**: Cluster ID of the remote IBM Spectrum Scale storage cluster.
 
 These configuration options are reflected in the following sections in the [*config.yaml*](config.yaml) file:
@@ -627,7 +627,7 @@ primaryRemoteStorageCluster:
     secretName:         "cnsa-remote-gui-secret"
     insecureSkipVerify: true
 
-# REQUIRED: primaryCluster is the local IBM Spectrum Scale CNSA cluster that will mount the primary file system and store IBM Spectrum Scale CSI driver configuration data.
+# REQUIRED: primaryCluster is the local IBM Spectrum Scale CNSA cluster with a remote mounted file system from the storage cluster.
 primaryCluster:
   local:
     clusterId:  "needs-to-be-read-after-CNSA-deployment"   

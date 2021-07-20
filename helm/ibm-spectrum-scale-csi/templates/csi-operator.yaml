@@ -54,8 +54,8 @@ spec:
               fieldPath: metadata.namespace
         - name: CSI_DRIVER_IMAGE
           value: quay.io/ibm-spectrum-scale/ibm-spectrum-scale-csi-driver:v2.2.0
-        image: {{ .Values.csiOperator.image.name }}:{{ .Values.csiOperator.image.tag | default .Chart.AppVersion }}
-        imagePullPolicy: IfNotPresent
+        image: {{ .Values.csiOperator.image.name }}
+        imagePullPolicy: {{ .Values.csiOperator.image.pullPolicy }}
         livenessProbe:
           exec:
             command:

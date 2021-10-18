@@ -5,8 +5,8 @@ metadata:
 spec:
   containers:
     - name: ibm-spectrum-scale-test-pod
-      image: alpine:latest
-      #image: registry.access.redhat.com/ubi8/ubi-minimal:latest
+      #image: alpine:latest
+      image: registry.access.redhat.com/ubi8/ubi-minimal:latest
       command: [ "/bin/sh", "-c", "--" ]
       args: [ "while true; do echo $(hostname) $(date +%Y%m%d-%H:%M:%S) | tee -a /data/stream1.out ; sleep 5 ; done;" ]
       volumeMounts:

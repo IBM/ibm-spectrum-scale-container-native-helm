@@ -1152,10 +1152,10 @@ Instead of
 you can simply use
 ```
 # oc apply -f ./helm/ibm-spectrum-scale/crds/ibm_v1_scalecluster_crd.yaml 
-# helm template ibm-spectrum-scale helm/ibm-spectrum-scale -f config.yaml -n ibm-spectrum-scale | oc apply -f -
+# helm template ibm-spectrum-scale helm/ibm-spectrum-scale -f config.yaml --no-hooks -n ibm-spectrum-scale | oc apply -f -
 
 # oc apply -f ./helm/ibm-spectrum-scale-csi/crds/csiscaleoperators.csi.ibm.com.crd.yaml
-# helm template ibm-spectrum-scale-csi helm/ibm-spectrum-scale-csi -f config.yaml \
+# helm template ibm-spectrum-scale-csi helm/ibm-spectrum-scale-csi -f config.yaml --no-hooks \
   --set primaryCluster.local.clusterId="$CLUSTERID" -n ibm-spectrum-scale-csi-driver | oc apply -f -
 ```
 which generates a complete YAML manifest from the Helm charts and applies it to the OpenShift cluster 
@@ -1176,10 +1176,10 @@ helm.sh/chart: {{ include "ibm-spectrum-scale.chart" . }}
 This additional label can also be removed on the fly for a deployment of the Helm charts with absolutely no traces left of the Helm chart templates:
 ```
 # oc apply -f ./helm/ibm-spectrum-scale/crds/ibm_v1_scalecluster_crd.yaml 
-# helm template ibm-spectrum-scale ./helm/ibm-spectrum-scale -f config.yaml -n ibm-spectrum-scale | grep -v 'helm.sh/chart' | oc apply -f -
+# helm template ibm-spectrum-scale ./helm/ibm-spectrum-scale -f config.yaml --no-hooks -n ibm-spectrum-scale | grep -v 'helm.sh/chart' | oc apply -f -
 
 # oc apply -f ./helm/ibm-spectrum-scale-csi/crds/csiscaleoperators.csi.ibm.com.crd.yaml
-# helm template ibm-spectrum-scale-csi ./helm/ibm-spectrum-scale-csi -f config.yaml \
+# helm template ibm-spectrum-scale-csi ./helm/ibm-spectrum-scale-csi -f config.yaml --no-hooks \
   --set primaryCluster.local.clusterId="$CLUSTERID" -n ibm-spectrum-scale-csi-driver | grep -v 'helm.sh/chart' | oc apply -f -
 ```
 

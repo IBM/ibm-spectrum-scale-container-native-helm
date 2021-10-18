@@ -72,7 +72,7 @@ The overall configuration is greatly simplified by minimizing and unifying the s
 combined deployment of IBM Spectrum Scale CNSA and IBM Spectrum Scale CSI driver.
 
 All instructions for the whole deployment including the required pre-installation tasks are described step by step in 
-[*Helm Chart Deployment of IBM Spectrum Scale CNSA/CSI*](INSTALL.md).
+[*Helm Chart Deployment of IBM Spectrum Scale CNSA/CSI*](INSTALL.md) in the [INSTALL.md](INSTALL.md) document.
 
 
 ## Disclaimer
@@ -93,9 +93,14 @@ combined deployment of specific *IBM Spectrum Scale CNSA* and *IBM Spectrum Scal
 E.g. a tag *v5.1.0.3-v2.1.0* (CNSA version-CSI driver version) refers to the Helm chart release for the combined deployment of
 IBM Spectrum Scale CNSA *v5.1.0.3* and IBM Spectrum Scale CSI driver *v2.1.0*.
 
-- Tag v5.1.0.3-v2.1.0: Helm charts for IBM Spectrum Scale CNSA v5.1.0.3 and IBM Spectrum Scale CSI driver v2.1.0
-- Tag v5.1.0.3-v2.2.0: Helm charts for IBM Spectrum Scale CNSA v5.1.0.3 and IBM Spectrum Scale CSI driver v2.2.0
-- Tag v5.1.1.1-v2.2.0: Helm charts for IBM Spectrum Scale CNSA v5.1.1.1 and IBM Spectrum Scale CSI driver v2.2.0
+- Tag v5.1.0.3-v2.1.0:<br> 
+  Helm charts for IBM Spectrum Scale CNSA v5.1.0.3 and IBM Spectrum Scale CSI driver v2.1.0
+- Tag v5.1.0.3-v2.2.0:<br> 
+  Helm charts for IBM Spectrum Scale CNSA v5.1.0.3 and IBM Spectrum Scale CSI driver v2.2.0
+- Tag v5.1.1.1-v2.2.0:<br>
+  Helm charts for IBM Spectrum Scale CNSA v5.1.1.1 and IBM Spectrum Scale CSI driver v2.2.0
+- Tag v5.1.1.1-v2.2.0-up1:<br>
+  Helm charts for IBM Spectrum Scale CNSA v5.1.1.1 and IBM Spectrum Scale CSI driver v2.2.0 with hooks
 
 ## Support
 

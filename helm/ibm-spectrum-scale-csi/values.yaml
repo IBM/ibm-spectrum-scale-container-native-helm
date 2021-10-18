@@ -50,9 +50,9 @@
 ## CUSTOMER ENVIRONMENT CONFIGURATION ##
 ########################################
 
-## ----------------------------------------------
-##  IBM Spectrum Scale CSI: Driver Configuration
-## ----------------------------------------------
+## -----------------------------------
+##  IBM Spectrum Scale CSI: Namespace
+## -----------------------------------
 
 # OPTIONAL: csiNamespace is the namespace to deploy CSI driver in. If undefined ("") the release namespace of the Helm chart will be used for CSI driver.
 csiNamespace: ""
@@ -267,7 +267,7 @@ csiSnapshotter:
     name: ""
 
 ## -------------------------------------------------------------------------
-##  IBM Spectrum Scale CNSA Variables for combinded deployment (CNSA & CSI)
+##  IBM Spectrum Scale CNSA Variables for combined deployment (CNSA & CSI)
 ## -------------------------------------------------------------------------
 
 # These variables are defined as empty variables. They will be populated accordingly when used in conjunction with 

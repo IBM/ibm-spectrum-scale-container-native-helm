@@ -928,7 +928,7 @@ due to wrong credentials specified in the secrets.
 Check the credentials in the CNSA secret *cnsa-remote-gui-secret* and on the remote IBM Spectrum Scale GUI,
 correct the issue and repeat the `helm install` command after running `helm uninstall ibm-spectrum-scale`.
 
-Add the `--no-hooks` option to the `helm install` command to prevent hooks from running during install.
+Note, you can add the `--no-hooks` option to the `helm install` command to prevent hooks from running during install.
 
 <a name="step4"></a>
 ### (STEP 4) Deploy the IBM Spectrum Scale CSI driver Helm Chart (*ibm-spectrum-scale-csi*)
@@ -1036,7 +1036,7 @@ Check the credentials in the remote user's CSI secret *csi-remote-secret* and on
 or in the local user's CSI secret *csi-local-secret* and on the local IBM Spectrum Scale CNSA GUI,
 correct the issue and repeat the `helm install` command after running `helm uninstall ibm-spectrum-scale-csi`.
 
-Add the `--no-hooks` option to the `helm install` command to prevent hooks from running during install.
+Note, you can add the `--no-hooks` option to the `helm install` command to prevent hooks from running during install.
 
 ## Remove IBM Spectrum Scale CNSA and CSI deployment
 

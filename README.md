@@ -72,7 +72,7 @@ The overall configuration is greatly simplified by minimizing and unifying the s
 combined deployment of IBM Spectrum Scale CNSA and IBM Spectrum Scale CSI driver.
 
 All instructions for the whole deployment including the required pre-installation tasks are described step by step in 
-[*Helm Chart Deployment of IBM Spectrum Scale CNSA/CSI*](INSTALL.md).
+[*Helm Chart Deployment of IBM Spectrum Scale CNSA/CSI*](INSTALL.md) in the [INSTALL.md](INSTALL.md) document.
 
 
 ## Disclaimer

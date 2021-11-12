@@ -1,24 +1,35 @@
 ------------------------------------------------------------------------
-IBM Spectrum Scale Container Native Storage Access {{ .Chart.AppVersion }} for OpenShift
+IBM Spectrum Scale Container Native Storage Access {{ .Chart.AppVersion }}
 ------------------------------------------------------------------------
 
-IBM Spectrum Scale Container Native Storage Access {{ .Chart.AppVersion }} was deployed as 
-"{{ .Release.Name }}-{{ .Chart.Version }}" release in namespace "{{ .Release.Namespace }}".
+IBM Spectrum Scale Container Native Storage Access {{ .Chart.AppVersion }} and
+IBM Spectrum Scale CSI Driver {{ .Values.csiVersion }} components were deployed as 
+in the following namespaces
+- ibm-spectrum-scale
+- ibm-spectrum-scale-operator
+- ibm-spectrum-scale-csi
+with the associated Helm chart release "{{ .Release.Name }}-{{ .Chart.Version }}"
+living in the "{{ .Release.Namespace }}" namespace.
 
-Verify that all pods are in a running state. You can watch the pod status by using:
-# oc get pods -n {{ .Release.Namespace }} -w
+The deployed Helm chart can be listed with:
+# helm list -A
+# helm list -n {{ .Release.Namespace }}
 
-This Helm chart is only intended to provide ease of use for an initial deployment (helm install) 
-of this application for Proof of Concepts (PoCs), demos or any other form of evaluations 
-where no further lifecycle managment and upgrade paths are considered. 
+Verify that all IBM Spectrum Scale Container Native pods enter a running state:
+# oc get pods -n ibm-spectrum-scale -w
 
-They are explicitely not intended and not supported for any production use! 
+Verify that all IBM Spectrum Scale CSI Driver pods enter a running state:
+# oc get pods -n ibm-spectrum-scale-csi -w
 
-This Helm chart does not provide support for any lifecycle management of this application,
-especially, "helm upgrade|rollback|uninstall" features are not supported.
+This Helm chart is only intended to provide ease of use for an initial deployment 
+with helm install for Proof of Concepts (PoCs), demos or any other form of evaluations 
+where no further lifecycle managment or upgrade paths are considered. 
+It is explicitely not intended and not supported for any production use and 
+does not provide support for any lifecycle management, especially, 
+"helm upgrade|rollback|uninstall" features are not supported.
 
 To remove IBM Spectrum Scale Container Native Storage Access please follow instructions at:
-https://www.ibm.com/docs/en/scalecontainernative?topic=5111-cleanup
+https://www.ibm.com/docs/en/scalecontainernative?topic=5114-cleaning-up-container-native-cluster
 
 The Helm chart and OpenShift resources of this deployment can be removed using:
 # oc delete scalecluster ibm-spectrum-scale -n {{ .Release.Namespace }}
@@ -34,4 +45,4 @@ Note: Only delete the project {{ .Release.Namespace }} and following resources i
 # oc get nodes -ojsonpath="{range .items[*]}{.metadata.name}{'\n'}" | xargs -I{} oc annotate node {} scale.ibm.com/nodedesc-
 
 For more information please refer to the official IBM Documentation at
-https://www.ibm.com/docs/en/scalecontainernative?topic=spectrum-scale-container-native-storage-access-5111
+https://www.ibm.com/docs/en/scalecontainernative?topic=spectrum-scale-container-native-storage-access-5114

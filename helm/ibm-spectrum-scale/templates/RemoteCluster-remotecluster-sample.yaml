@@ -1,0 +1,32 @@
+apiVersion: scale.spectrum.ibm.com/v1beta1
+kind: RemoteCluster
+metadata:
+  labels:
+    app.kubernetes.io/instance: ibm-spectrum-scale
+    app.kubernetes.io/name: cluster
+  name: {{ .Values.primaryFilesystem.remoteCluster }}
+  namespace: ibm-spectrum-scale
+spec:
+  # contactNodes are optional and provides a list of nodes from the storage cluster
+  # to be used as the remote cluster contact nodes.  The names should be the daemon
+  # node names.  If not specified, the operator will use any 3 nodes detected
+  # from the storage cluster.
+  # contactNodes:
+  # - storagecluster1node1
+  # - storagecluster1node2
+  {{- if .Values.remoteCluster.contactNodes }}
+  contactNodes:
+    {{- toYaml .Values.remoteCluster.contactNodes | nindent 2 }}
+  {{- end }}
+  gui:
+    {{- if .Values.remoteCluster.gui.cacert }}
+    cacert: {{ .Values.remoteCluster.gui.cacert }}
+    {{- end }}
+    # This is the secret that contains the CSIAdmin user
+    # credentials in the ibm-spectrum-scale-csi namespace.
+    csiSecretName: {{ .Values.remoteCluster.gui.csiSecretName }}
+    host: {{ .Values.remoteCluster.gui.host }}
+    insecureSkipVerify: {{ .Values.remoteCluster.gui.insecureSkipVerify }}
+    # This is the secret that contains the ContainerOperator user
+    # credentials in the ibm-spectrum-scale namespace
+    secretName: {{ .Values.remoteCluster.gui.secretName }}

@@ -1,0 +1,26 @@
+{{- if .Values.encryptionConfig.name }}
+apiVersion: scale.spectrum.ibm.com/v1beta1
+kind: EncryptionConfig
+metadata:
+  labels:
+    app.kubernetes.io/instance: ibm-spectrum-scale
+    app.kubernetes.io/name: cluster
+  name: {{ .Values.encryptionConfig.name }}
+  namespace: ibm-spectrum-scale
+spec:
+  {{- if .Values.encryptionConfig.cacert }}
+  cacert: {{ .Values.encryptionConfig.cacert }}
+  {{- end }}
+  client: {{ .Values.encryptionConfig.client }}
+  {{- if .Values.encryptionConfig.filesystems }}
+  filesystems:
+    {{- toYaml .Values.encryptionConfig.filesystems | nindent 2 }}
+  {{- end }}
+  {{- if .Values.encryptionConfig.port }}
+  port: {{ .Values.encryptionConfig.port }}
+  {{- end }}
+  remoteRKM: {{ .Values.encryptionConfig.remoteRKM }}
+  secret: {{ .Values.encryptionConfig.secret }}
+  server: {{ .Values.encryptionConfig.server }}
+  tenant: {{ .Values.encryptionConfig.tenant }}
+{{- end }}

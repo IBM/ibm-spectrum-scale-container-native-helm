@@ -897,7 +897,7 @@ In case you run into trouble you can also examine the IBM Spectrum Scale CNSA op
 NAME                                                     READY   STATUS    RESTARTS   AGE
 ibm-spectrum-scale-controller-manager-75f9c9f6fd-wxk52   1/1     Running   0          3d2h
 
-# oc get logs ibm-spectrum-scale-controller-manager-75f9c9f6fd-wxk52 -n ibm-spectrum-scale-operator
+# oc logs ibm-spectrum-scale-controller-manager-75f9c9f6fd-wxk52 -n ibm-spectrum-scale-operator
 [...]
 ```
 

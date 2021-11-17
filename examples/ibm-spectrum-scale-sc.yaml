@@ -11,4 +11,5 @@ parameters:
   #inodeLimit: "1000000"
   #filesetType: "dependent"
   #parentFileset: "independent-fileset-fset1"
+  #permissions: "777"
 reclaimPolicy: Delete

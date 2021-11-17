@@ -1,0 +1,16 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/instance: ibm-spectrum-scale
+    app.kubernetes.io/name: operator
+  name: ibm-spectrum-scale-privileged
+rules:
+- apiGroups:
+  - security.openshift.io
+  resourceNames:
+  - ibm-spectrum-scale-privileged
+  resources:
+  - securitycontextconstraints
+  verbs:
+  - use

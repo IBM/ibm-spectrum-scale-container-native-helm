@@ -1,0 +1,33 @@
+apiVersion: v1
+data:
+  controller_manager_config.yaml: |
+    apiVersion: scale.spectrum.ibm.com/v1alpha1
+    kind: ClusterManagerConfig
+    health:
+      healthProbeBindAddress: :8081
+    metrics:
+      bindAddress: 127.0.0.1:8080
+    webhook:
+      port: 9443
+    leaderElection:
+      leaderElect: true
+      resourceName: scale.spectrum.ibm.com
+      resourceLock: leases
+    images:
+      coreECE: {{ .Values.cnsaImages.coreECE }}
+      coreDME: {{ .Values.cnsaImages.coreDME }}
+      coreDAE: {{ .Values.cnsaImages.coreDAE }}
+      coreInit: {{ .Values.cnsaImages.coreInit }}
+      gui: {{ .Values.cnsaImages.gui }}
+      postgres: {{ .Values.cnsaImages.postgres }}
+      logs: {{ .Values.cnsaImages.logs }}
+      pmcollector: {{ .Values.cnsaImages.pmcollector }}
+      sysmon: {{ .Values.cnsaImages.sysmon }}
+      grafanaBridge: {{ .Values.cnsaImages.grafanaBridge }}
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/instance: ibm-spectrum-scale
+    app.kubernetes.io/name: operator
+  name: ibm-spectrum-scale-manager-config
+  namespace: ibm-spectrum-scale-operator

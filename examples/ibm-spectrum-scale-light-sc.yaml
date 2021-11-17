@@ -1,0 +1,12 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ibm-spectrum-scale-light-sc
+provisioner: spectrumscale.csi.ibm.com
+parameters:
+  volBackendFs: "<file system name on local CNSA cluster>"
+  volDirBasePath: "<relative path to directory in file system to host CSI volumes / directory must exist>"
+  #uid: "1000"
+  #gid: "1000"
+  #permissions: "777"
+reclaimPolicy: Delete

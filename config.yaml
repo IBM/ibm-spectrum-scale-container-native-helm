@@ -104,8 +104,8 @@ grafanaBridge: none
 #           https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#dns-label-names.
 # remoteFs: Name of the corresponding file system on the remote storage cluster (= "remote.fs" in Filesystem CR). Must exist.
 # remoteCluster (optional): Internal object name for the remote storage cluster that is hosting remoteFs. 
-#           The name is only used as internal reference to bind the "remote.cluster" refernce in 
-#           the Filesystem CR to the "metadata.name" of the corresponding RemoteCluster CR.
+#           The name is only used as internal reference to bind the "remote.cluster" reference in the Filesystem CR 
+#           to the "metadata.name" of the corresponding RemoteCluster CR (i.e. the name of the created RemoteCluster CR).
 #           If specified it must comply with DNS label name rules as outlined above.
 primaryFilesystem:
   localFs:          "fs1"

@@ -219,8 +219,8 @@ Make sure that all these directories have been removed successfully.
 (b) Remove the primary fileset created by IBM Spectrum Scale CSI:
 ```
 # mmlsfileset [your-file-system-name] -L
-# mmunlinkfileset [your-file-system-name] primary-fileset-[your-file-system-name]-[your-former-CNSA-cluster-ID]
-# mmdelfileset [your-file-system-name] primary-fileset-[your-file-system-name]-[your-former-CNSA-cluster-ID] -f
+# mmunlinkfileset [your-file-system-name] primary-fileset-[your-former-CNSA-file-system-name]-[your-former-CNSA-cluster-ID]
+# mmdelfileset [your-file-system-name] primary-fileset-[your-former-CNSA-file-system-name]-[your-former-CNSA-cluster-ID] -f
 ```
 
 ## DISCLAIMER

@@ -25,7 +25,7 @@ please refer to the official [IBM Documentation](https://www.ibm.com/docs/en/sca
 
 The Helm chart is only intended to provide ease of use for an *initial* deployment (`helm install`) of 
 IBM Spectrum Scale® Container Native Storage Access (CNSA) with IBM Spectrum Scale® CSI driver on Red Hat® OpenShift®
-for *Proof of Concepts (PoCs)*, *demos* or any other form of *evaluations* where no further lifecycle management 
+for *Proof of Concepts (PoCs)*, *demos* or any other types of *evaluation* where no further lifecycle management 
 and upgrade paths are considered. It is explicitly not intended and not supported for any production use.
 
 You can also generate a final YAML manifest from the Helm chart and the customized configuration file

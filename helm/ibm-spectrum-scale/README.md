@@ -7,8 +7,8 @@ This Helm chart deploys
 - IBM Spectrum Scale CSI Driver v2.3.1
 
 This Helm chart is only intended to provide ease of use for an 
-initial deployment for Proof of Concepts (PoCs), demos or any other 
-form of evaluations where no further lifecycle managment and upgrade 
+initial deployment for Proof of Concepts (PoCs), demos or any other
+types of evaluation where no further lifecycle managment and upgrade 
 paths are considered. It is explicitly not intended for production use.
 
 This Helm chart is not supported by the IBM Spectrum Scale container 
@@ -227,7 +227,7 @@ Make sure that all these directories have been removed successfully.
 
   This Helm chart is only intended to provide ease of use for an 
   initial deployment for Proof of Concepts (PoCs), demos or any other 
-  form of evaluations where no further lifecycle managment and upgrade 
+  types of evaluation where no further lifecycle managment and upgrade 
   paths are considered. It is explicitly not intended for production use.
   
   This Helm chart is not supported by the IBM Spectrum Scale container 

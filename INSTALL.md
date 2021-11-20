@@ -522,7 +522,7 @@ Note:
   that will used for the remote mount. This file system *must* exist prior to the deployment.
   A list of available file systems on the storage cluster can be obtained from `mmlsconfig` or by running 
   ```
-  # curl -k -u 'cnsa_admin:cnsa_PASSWORD' https://<remote storage cluster GUI host>:443/scalemgmt/v2/filesystems`
+  # curl -k -u 'cnsa_admin:cnsa_PASSWORD' https://<remote storage cluster GUI host>:443/scalemgmt/v2/filesystems
   ```
 
 This minimum configuration will automatically create the *secrets* for the CNSA/CSI GUI users 

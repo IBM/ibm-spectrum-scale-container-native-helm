@@ -60,7 +60,7 @@ The physical storage is provided by the *remote* IBM Spectrum Scale *storage* cl
 (e.g. an [IBM Elastic Storage System](https://www.ibm.com/products/elastic-storage-system))
 using a remote mount of an IBM Spectrum Scale file system.
 
-![plot](./pics/ibm-spectrum-scale-cnsa.png)
+![architecture-overview](./pics/ibm-spectrum-scale-cnsa.png)
 
 ## Requirements
 

@@ -32,15 +32,15 @@ https://www.ibm.com/docs/en/scalecontainernative?topic=5114-cleaning-up-containe
 
 Complete removal of the IBM Spectrum Scale CNSA and CSI Helm chart deployment involves the following steps on OpenShift: 
 # oc delete deployment ibm-spectrum-scale-controller-manager -n ibm-spectrum-scale-operator
-# oc delete  csiscaleoperators ibm-spectrum-scale-csi -n ibm-spectrum-scale-csi
-# helm uninstall ibm-spectrum-scale -n ibm-spectrum-scale
+# oc delete csiscaleoperators ibm-spectrum-scale-csi -n ibm-spectrum-scale-csi
+# helm uninstall {{ .Release.Name }} -n {{ .Release.Namespace }}
 # oc delete -f helm/ibm-spectrum-scale/crds
-# oc delete pv -lapp.kubernetes.io/instance=ibm-spectrum-scale,app.kubernetes.io/name=pmcollector
-# oc delete sc -lapp.kubernetes.io/instance=ibm-spectrum-scale,app.kubernetes.io/name=pmcollector
+# oc delete pv -l app.kubernetes.io/instance=ibm-spectrum-scale,app.kubernetes.io/name=pmcollector
+# oc delete sc -l app.kubernetes.io/instance=ibm-spectrum-scale,app.kubernetes.io/name=pmcollector
 # oc get nodes -l node-role.kubernetes.io/worker --no-headers | while read a b; do echo "## $a ##"; oc debug node/$a -- chroot /host sh -c "rm -rf /var/mmfs; rm -rf /var/adm/ras"; sleep 5; done
 # oc label node --all scale.spectrum.ibm.com/role- scale.spectrum.ibm.com/designation- scale-
 
 A complete removal also requires the following clean up steps on the remote storage cluster:
 # mmauth delete ibm-spectrum-scale.[your-OpenShift-domain]
-# mmunlinkfileset [your-file-system-name] primary-fileset-[your-file-system-name]-[your-former-CNSA-cluster-ID]
-# mmdelfileset [your-file-system-name] primary-fileset-[your-file-system-name]-[your-former-CNSA-cluster-ID] -f
+# mmunlinkfileset {{ .Values.primaryFilesystem.remoteFs }} primary-fileset-{{ .Values.primaryFilesystem.localFs }}-[your-former-CNSA-cluster-ID]
+# mmdelfileset {{ .Values.primaryFilesystem.remoteFs }} primary-fileset-{{ .Values.primaryFilesystem.localFs }}-[your-former-CNSA-cluster-ID] -f

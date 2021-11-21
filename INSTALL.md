@@ -60,7 +60,7 @@ The physical storage is provided by the *remote* IBM Spectrum Scale *storage* cl
 (e.g. an [IBM Elastic Storage System](https://www.ibm.com/products/elastic-storage-system))
 using a remote mount of an IBM Spectrum Scale file system.
 
-![plot](./pics/ibm-spectrum-scale-cnsa.png)
+![architecture-overview](./pics/ibm-spectrum-scale-cnsa.png)
 
 ## Requirements
 
@@ -522,7 +522,7 @@ Note:
   that will used for the remote mount. This file system *must* exist prior to the deployment.
   A list of available file systems on the storage cluster can be obtained from `mmlsconfig` or by running 
   ```
-  # curl -k -u 'cnsa_admin:cnsa_PASSWORD' https://<remote storage cluster GUI host>:443/scalemgmt/v2/filesystems`
+  # curl -k -u 'cnsa_admin:cnsa_PASSWORD' https://<remote storage cluster GUI host>:443/scalemgmt/v2/filesystems
   ```
 
 This minimum configuration will automatically create the *secrets* for the CNSA/CSI GUI users 
@@ -1048,23 +1048,23 @@ The CNSA cluster will show up as `ibm-spectrum-scale.[your-OpenShift-domain]`.
 ```
 # mmlsfileset essfs1 -L
 Filesets in file system 'essfs1':
-Name                            Id      RootInode  ParentId Created                      InodeSpace      MaxInodes    AllocInodes Comment
-root                             0              3        -- Thu Jul  1 10:15:19 2021        0             24830976         500736 root fileset
-primary-fileset-essfs1_-17732446135908190530 1 524291     0 Fri Nov 12 12:04:41 2021        1              1048576          52224 Fileset created by IBM Container Storage Interface driver
+Name                                    Id  RootInode  ParentId Created                      InodeSpace      MaxInodes    AllocInodes Comment
+root                                     0          3        -- Thu Jul  1 10:15:19 2021        0             24830976         500736 root fileset
+primary-fileset-fs1-17732446135908190530 1     524291         0 Fri Nov 12 12:04:41 2021        1              1048576          52224 Fileset created by IBM Container Storage Interface driver
 
-# mmunlinkfileset essfs1 primary-fileset-essfs1-17732446135908190530
-Fileset primary-fileset-essfs1-17732446135908190530 unlinked.
+# mmunlinkfileset essfs1 primary-fileset-fs1-17732446135908190530
+Fileset primary-fileset-fs1-17732446135908190530 unlinked.
 
-# mmdelfileset essfs1 primary-fileset-essfs1-17732446135908190530 -f
+# mmdelfileset essfs1 primary-fileset-fs1-17732446135908190530 -f
 Checking fileset ...
 Checking fileset complete.
 Deleting user files ...
  100.00 % complete on Mon Nov 15 16:46:54 2021  (     52224 inodes with total        204 MB data processed)
 Deleting fileset ...
-Fileset primary-fileset-essfs1-17732446135908190530 deleted.
+Fileset primary-fileset-fs1-17732446135908190530 deleted.
 ```
 The name of the primary fileset name of the IBM Spectrum Scale CSI driver is built as follows: 
-`primary-fileset-[your-file-system-name]-[your-CNSA-cluster-ID]`.
+`primary-fileset-[your-CNSA-file-system-name]-[your-CNSA-cluster-ID]`.
 
 ## Deploy IBM Spectrum Scale CNSA and CSI driver using Helm chart templating
 

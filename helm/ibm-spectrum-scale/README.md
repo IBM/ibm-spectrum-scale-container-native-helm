@@ -7,8 +7,8 @@ This Helm chart deploys
 - IBM Spectrum Scale CSI Driver v2.3.1
 
 This Helm chart is only intended to provide ease of use for an 
-initial deployment for Proof of Concepts (PoCs), demos or any other 
-form of evaluations where no further lifecycle managment and upgrade 
+initial deployment for Proof of Concepts (PoCs), demos or any other
+types of evaluation where no further lifecycle managment and upgrade 
 paths are considered. It is explicitly not intended for production use.
 
 This Helm chart is not supported by the IBM Spectrum Scale container 
@@ -39,10 +39,11 @@ can be found at:
 The deployment of IBM Spectrum Scale Container Native requires 
 certain mandatory planning and preparation steps.
 
-Please see: 
-- [IBM Spectrum Scale Container Native - Planning](https://www.ibm.com/docs/en/scalecontainernative?topic=5114-planning),
-- [IBM Spectrum Scale Container Native - Installation prerequisites](https://www.ibm.com/docs/en/scalecontainernative?topic=5114-installation-prerequisites) and
-- [Installing the IBM Spectrum Scale container native operator and cluster](https://www.ibm.com/docs/en/scalecontainernative?topic=5114-installing-spectrum-scale-container-native-operator-cluster).
+Please see:
+- [Helm Chart Deployment of IBM Spectrum Scale CNSA/CSI](https://github.com/IBM/ibm-spectrum-scale-container-native-helm/blob/main/INSTALL.md#preinstallation-tasks)
+- [IBM Spectrum Scale Container Native - Planning](https://www.ibm.com/docs/en/scalecontainernative?topic=5114-planning)
+- [IBM Spectrum Scale Container Native - Installation prerequisites](https://www.ibm.com/docs/en/scalecontainernative?topic=5114-installation-prerequisites)
+- [Installing the IBM Spectrum Scale container native operator and cluster](https://www.ibm.com/docs/en/scalecontainernative?topic=5114-installing-spectrum-scale-container-native-operator-cluster)
 
 ## NAMESPACES
 
@@ -56,9 +57,9 @@ objects are created and managed by the operators which have dependencies
 on these namespaces and are beyond the control of this Helm chart.
 
 The namespaces will not be removed by Helm with `helm uninstall`.
-The namespace manifests are located in the crds/ directory of the Helm chart
+The namespace manifests are located in the *crds/* directory of the Helm chart
 to ensure that they are applied automatically prior to the deployment 
-of the manifests in the templates/ directory.
+of the manifests in the *templates/* directory.
 
 ## VALUES
 
@@ -110,14 +111,14 @@ and described in the `config.yaml`/`values.yaml` file with references to the off
 
 ## DEPLOYMENT
 
-(1) Create the release namespace "ibm-spectrum-scale" for the Helm chart:
-```
-# oc apply -f helm/ibm-spectrum-scale/crds/Namespace-ibm-spectrum-scale.yaml
-```
-
-(2) Edit the `config.yaml` (local copy of `values.yaml`) to configure the Helm chart deployment for your environment:
+(1) Edit the `config.yaml` (local copy of `values.yaml`) to configure the Helm chart deployment for your environment:
 ```
 # vi config.yaml
+```
+
+(2) Create the release namespace "ibm-spectrum-scale" for the Helm chart:
+```
+# oc apply -f helm/ibm-spectrum-scale/crds/Namespace-ibm-spectrum-scale.yaml
 ```
 
 (3) Deploy the Helm chart:
@@ -151,7 +152,7 @@ Check the logs to identify why the CNSA / CSI user access to the storage GUI fai
 # oc logs job/ibm-spectrum-scale-csi-gui-access-test -n ibm-spectrum-scale-csi
 ```
 A `401 Unauthorized Error` indicates that the provided credentials are not correct or that
-the user has not been properly created on the storage cluster GUI.
+the user account has not been properly created on the storage cluster GUI.
 
 ## REMOVAL
 
@@ -219,15 +220,15 @@ Make sure that all these directories have been removed successfully.
 (b) Remove the primary fileset created by IBM Spectrum Scale CSI:
 ```
 # mmlsfileset [your-file-system-name] -L
-# mmunlinkfileset [your-file-system-name] primary-fileset-[your-file-system-name]-[your-former-CNSA-cluster-ID]
-# mmdelfileset [your-file-system-name] primary-fileset-[your-file-system-name]-[your-former-CNSA-cluster-ID] -f
+# mmunlinkfileset [your-file-system-name] primary-fileset-[your-former-CNSA-file-system-name]-[your-former-CNSA-cluster-ID]
+# mmdelfileset [your-file-system-name] primary-fileset-[your-former-CNSA-file-system-name]-[your-former-CNSA-cluster-ID] -f
 ```
 
 ## DISCLAIMER
 
   This Helm chart is only intended to provide ease of use for an 
   initial deployment for Proof of Concepts (PoCs), demos or any other 
-  form of evaluations where no further lifecycle managment and upgrade 
+  types of evaluation where no further lifecycle managment and upgrade 
   paths are considered. It is explicitly not intended for production use.
   
   This Helm chart is not supported by the IBM Spectrum Scale container 

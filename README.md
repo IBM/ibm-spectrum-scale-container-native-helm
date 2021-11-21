@@ -2,19 +2,38 @@
 
 Helm chart to deploy IBM Spectrum Scale® Container Native with CSI driver on Red Hat® OpenShift®
 
-## Abstract
+## Helm charts
 
-This repository provides a sample Helm chart for the deployment of
+*Helm charts* allow to separate the *configurable parameters* from the *YAML manifests* of the individual components
+and help to simplify and automate the deployment of containerized applications. 
+The default [values.yaml](helm/ibm-spectrum-scale/values.yaml) file is part of the Helm chart 
+and contains all customizable parameters with their default values for the application.
 
-- [*IBM Spectrum Scale Container Native Storage Access* (CNSA) v5.1.1.4](https://www.ibm.com/docs/en/scalecontainernative?topic=spectrum-scale-container-native-storage-access-5114) and 
+An administrator only has to edit *one central configuration file* to configure and customize the whole deployment 
+without touching any of the YAML manifests of the application. 
+It combines all customizable parameters, can easily be reused, or even automatically be created 
+in automation scripts with just the minimum set of configuration parameters needed.
+
+Helm chart deployments can be customized with a single *configuration file* (YAML format)
+```
+# helm install <release name> <Helm chart> -f <configuration file> -n <release namespace>
+```
+and/or with specifying just the required configuration parameters directly on the command line: 
+```
+# helm install <release name> <Helm chart> --set <config-key1>=<config-value1>,<config-key2>=<config-value2> -n <release namespace>
+```
+
+## Helm chart for IBM Spectrum Scale Container Native
+
+This repository provides a sample *Helm chart* for the deployment of
+- [*IBM Spectrum Scale Container Native Storage Access* (CNSA) v5.1.1.4](https://www.ibm.com/docs/en/scalecontainernative?topic=spectrum-scale-container-native-storage-access-5114) with 
 - [*IBM Spectrum Scale CSI driver* v2.3.1](https://www.ibm.com/docs/en/spectrum-scale-csi?topic=spectrum-scale-container-storage-interface-driver-231) 
 
-using a *single* configuration file ([*config.yaml*](config.yaml)) separated from the YAML manifests.
+using a *single* configuration file ([*config.yaml*](config.yaml) - a copy of [values.yaml](helm/ibm-specrum-scale/values.yaml)) separated from the YAML manifests. 
 
 The Helm chart comes with its own [README.md](helm/ibm-spectrum-scale/README.md) as a *quick start guide* on how to install it. 
 
-It is based on the original YAML manifests from the public IBM Github repositories:
-
+It is based on the original YAML manifests that can be found at the public IBM Github repositories:
 - [IBM Spectrum Scale container native](https://github.com/IBM/ibm-spectrum-scale-container-native)
 - [IBM Spectrum Scale CSI](https://github.com/IBM/ibm-spectrum-scale-csi)
 
@@ -25,7 +44,7 @@ please refer to the official [IBM Documentation](https://www.ibm.com/docs/en/sca
 
 The Helm chart is only intended to provide ease of use for an *initial* deployment (`helm install`) of 
 IBM Spectrum Scale® Container Native Storage Access (CNSA) with IBM Spectrum Scale® CSI driver on Red Hat® OpenShift®
-for *Proof of Concepts (PoCs)*, *demos* or any other form of *evaluations* where no further lifecycle management 
+for *Proof of Concepts (PoCs)*, *demos* or any other types of *evaluation* where no further lifecycle management 
 and upgrade paths are considered. It is explicitly not intended and not supported for any production use.
 
 You can also generate a final YAML manifest from the Helm chart and the customized configuration file
@@ -50,32 +69,32 @@ and may no longer be suitable for a Helm chart deployment at which point this He
 
 With the release of IBM Spectrum Scale Container Native Storage Access v5.1.1.3 the deployment of 
 IBM Spectrum Scale CSI driver was integrated into the CNSA deployment. 
-So, now there is only *one* Helm chart to deploy IBM Spectrum Scale Container Native Storage Access with
+So now, there is only *one* Helm chart to deploy IBM Spectrum Scale Container Native Storage Access with
 IBM Spectrum Scale CSI driver.
 
-This repository also provides a directory [(examples)](examples) with some sample YAML manifests to get started quickly and easily:
+## Example manifests for dynamic volume provisioning
+
+The repository also provides a directory [examples/](examples) with sample YAML manifests 
+to quickly get started with *dynamic provisioning* of *persistent volumes* (PVs) in OpenShift/Kubernetes.
+It contains samples to create a *storage class* (SC), a *persistent volume claim* (PVC) as well as a *test pod* 
+which is writing a time-stamp in 5-second intervals into the mounted volume: 
 - [*ibm-spectrum-scale-sc.yaml*](examples/ibm-spectrum-scale-sc.yaml) (storage class, fileset based, used for the PVC and test-pod)
 - [*ibm-spectrum-scale-light-sc.yaml*](examples/ibm-spectrum-scale-light-sc.yaml) (storage class, lightweight / directory based)
 - [*ibm-spectrum-scale-pvc.yaml*](examples/ibm-spectrum-scale-pvc.yaml) (persistent volume claim / PVC) 
 - [*ibm-spectrum-scale-test-pod.yaml*](examples/ibm-spectrum-scale-test-pod.yaml) (test pod using a Red Hat *ubi8/ubi-minimal* image)
 
-These sample manifests allow to create a *storage class* (SC) and run a quick *sanity check* as described in 
-[Example of using storage provisioning with IBM Spectrum Scale](INSTALL.md#example-of-using-storage-provisioning-with-ibm-spectrum-scale)
-with a full cycle of *dynamic storage provisioning* using a *persistent volume claim* (PVC) and a *test pod*.
+The sample manifests allow to run a quick *sanity check* of your deployment with a full cycle of *dynamic storage provisioning* 
+with IBM Spectrum Scale CNSA/CSI. For further details, please refer to 
+[Example of using storage provisioning with IBM Spectrum Scale](INSTALL.md#example-of-using-storage-provisioning-with-ibm-spectrum-scale).
 
 ## Installation
 
-*Helm charts* allow to separate the *configurable parameters* from the *YAML manifests* of the individual components
-and help to simplify and automate the deployment of containerized applications. 
-An administrator only has to edit *one* central configuration file, here [*config.yaml*](config.yaml),
-to configure and customize the whole deployment without touching any of the YAML manifests of the application.
-
 Once all prerequisites are met the Helm chart deployment only requires the following steps:
-1. Edit the [*config.yaml*](config.yaml) file to reflect your local configuration
-2. Deploy the IBM Spectrum Scale CNSA Helm Chart ([*ibm-spectrum-scale*](helm/ibm-spectrum-scale))
+1. Edit the [*config.yaml*](config.yaml) file to reflect your local configuration.
+2. Deploy the IBM Spectrum Scale CNSA Helm chart ([*ibm-spectrum-scale*](helm/ibm-spectrum-scale)).
 
 The Helm chart can also create the Kubernetes *secrets* for the CNSA and CSI users automatically. 
-Furthermore it uses *hooks* to test proper access to the GUI of the remote storage cluster 
+Furthermore, it uses *hooks* to test proper access to the GUI of the remote storage cluster 
 with the provided credentials (or secrets) prior to starting the actual deployment. 
 
 For a *quick start guide* on how to install it, please refer to the [README.md](helm/ibm-spectrum-scale/README.md). 
@@ -83,6 +102,10 @@ provided with the Helm chart.
 
 For detailed instructions of the whole deployment including the required pre-installation tasks, please see 
 [*Helm Chart Deployment of IBM Spectrum Scale CNSA/CSI*](INSTALL.md) in the [INSTALL.md](INSTALL.md) document.
+
+Watch the video to see the Helm chart deployment in action:
+
+[![Watch the video](pics/Helm-WatchTheVideo-Icon.png)](https://ibm.box.com/s/kxh2p0shesh6u7b5w2f5hw74lq7p12iv)
 
 ## Disclaimer
 

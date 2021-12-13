@@ -105,7 +105,7 @@ For detailed instructions of the whole deployment including the required pre-ins
 
 Watch the video to see the Helm chart deployment in action:
 
-[![Watch the video](pics/Helm-WatchTheVideo-Icon.png)](https://ibm.box.com/s/kxh2p0shesh6u7b5w2f5hw74lq7p12iv)
+[![Watch the video](pics/Helm-WatchTheVideo-Icon.png)](https://ibm.box.com/s/7uixhyxn2wzfihng1dgcyc5s83j5cpz5)
 
 ## Disclaimer
 

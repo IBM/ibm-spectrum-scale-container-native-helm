@@ -751,7 +751,7 @@ Now you can start creating Kubernetes *storage classes* (SCs) and *persistent vo
 to provide persistent storage to your containerized applications as described in 
 [Example of using storage provisioning with IBM Spectrum Scale](#example-of-using-storage-provisioning-with-ibm-spectrum-scale).
 
-See [Using IBM Spectrum Scale Container Storage Interface driver](https://www.ibm.com/docs/en/spectrum-scale-csi?topic=231-using-spectrum-scale-container-storage-interface-driver)
+See [Using IBM Spectrum Scale Container Storage Interface driver](https://www.ibm.com/docs/en/spectrum-scale-csi?topic=240-using-spectrum-scale-container-storage-interface-driver)
 for more details.
 
 ## Verify your deployment

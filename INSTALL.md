@@ -31,8 +31,8 @@
 ## Abstract
 
 This document provides details on how to use of this Helm chart to deploy
-[*IBM Spectrum Scale Container Native Storage Access* (CNSA) v5.1.1.4](https://www.ibm.com/docs/en/scalecontainernative?topic=spectrum-scale-container-native-storage-access-5114) with 
-[*IBM Spectrum Scale CSI driver* v2.3.1](https://www.ibm.com/docs/en/spectrum-scale-csi?topic=spectrum-scale-container-storage-interface-driver-231).
+[*IBM Spectrum Scale Container Native Storage Access* (CNSA) v5.1.2.1](https://www.ibm.com/docs/en/scalecontainernative?topic=spectrum-scale-container-native-storage-access-5121) with 
+[*IBM Spectrum Scale CSI driver* v2.4.0](https://www.ibm.com/docs/en/spectrum-scale-csi?topic=spectrum-scale-container-storage-interface-driver-240).
 
 *Helm charts* allow to separate the *configurable parameters* from the *YAML manifests* of the individual components
 and help to simplify and automate the deployment of containerized applications. 
@@ -66,9 +66,9 @@ using a remote mount of an IBM Spectrum Scale file system.
 
 The deployment of *IBM Spectrum Scale Container Native* requires certain mandatory planning and preparation steps
 as described in the official IBM documentation:
-- [IBM Spectrum Scale Container Native - Planning](https://www.ibm.com/docs/en/scalecontainernative?topic=5114-planning),
-- [IBM Spectrum Scale Container Native - Installation prerequisites](https://www.ibm.com/docs/en/scalecontainernative?topic=5114-installation-prerequisites) and
-- [Installing the IBM Spectrum Scale container native operator and cluster](https://www.ibm.com/docs/en/scalecontainernative?topic=5114-installing-spectrum-scale-container-native-operator-cluster).
+- [IBM Spectrum Scale Container Native - Planning](https://www.ibm.com/docs/en/scalecontainernative?topic=5121-planning),
+- [IBM Spectrum Scale Container Native - Installation prerequisites](https://www.ibm.com/docs/en/scalecontainernative?topic=5121-installation-prerequisites) and
+- [Installing the IBM Spectrum Scale container native operator and cluster](https://www.ibm.com/docs/en/scalecontainernative?topic=5121-installing-spectrum-scale-container-native-operator-cluster).
 
 The major steps will also be outlined in detail this document. 
 
@@ -78,19 +78,19 @@ to install IBM Spectrum Scale CNSA with this Helm chart on Red Hat OpenShift 4.x
 * General [Prerequisites](https://www.ibm.com/docs/en/scalecontainernative?topic=planning-prerequisites).
 * [Hardware requirements](https://www.ibm.com/docs/en/scalecontainernative?topic=planning-hardware-requirements).
 * [Software requirements](https://www.ibm.com/docs/en/scalecontainernative?topic=planning-software-requirements).
-* A Red Hat OpenShift Container Platform cluster, version 4.7/4.8 with a minimum configuration 
+* A Red Hat OpenShift Container Platform cluster, version 4.7/4.8/4.9 with a minimum configuration 
   of *three* master nodes and *three* worker nodes (and a supported maximum of 128 worker nodes).
   A compact 3-node cluster running CNSA on master nodes in resource constrained environments, e.g. for Edge deployments, 
   is also supported, see [Compact Clusters Support](https://www.ibm.com/docs/en/scalecontainernative?topic=configuration-compact-cluster-support).
-* An IBM Spectrum Scale *storage* cluster running IBM Spectrum Scale version 5.1.1.4 or higher (ideally a minimum of 3 nodes) 
+* An IBM Spectrum Scale *storage* cluster running IBM Spectrum Scale version 5.1.2.1 or higher (ideally a minimum of 3 nodes) 
   with IBM Spectrum Scale GUI to provide a REST API for IBM Spectrum Scale CNSA and CSI driver.
   The *storage* cluster provides an IBM Spectrum Scale file system that backs the persistent storage in OpenShift. This file system 
   is mounted through a *remote mount* (also referred to as *cross-cluster mount*) on the local IBM Spectrum Scale CNSA 
   *compute* cluster and the OpenShift worker nodes as a clustered parallel file system.
   Note that all nodes of the local *compute* and remote *storage* cluster need to be able to communicate over the 
   IBM Spectrum Scale *daemon* network with each other (this is a prerequisite for the *remote mount*).
-* IBM Spectrum Scale CNSA v5.1.1.4 supports IBM Spectrum Scale file system versions V25 (5.1.1) or earlier for the remote mount 
-  (`mmlsfs <fs name> -V`). Should you upgrade the remote storage cluster beyond 5.1.1.4 at some point, make sure to stay at 
+* IBM Spectrum Scale CNSA v5.1.2.1 supports IBM Spectrum Scale file system versions V26.00 or earlier for the remote mount 
+  (`mmlsfs <fs name> -V`). Should you upgrade the remote storage cluster beyond 5.1.2.1 at some point, make sure to stay at 
   a supported version of the file system for the remote mount by making use of `mmchfs <fs name> -V compat` 
   to retain accessibility from the IBM Spectrum Scale CNSA compute cluster.
 * Access to the *IBM Cloud Container Registry (ICR)* is required, 
@@ -109,7 +109,7 @@ to install IBM Spectrum Scale CNSA with this Helm chart on Red Hat OpenShift 4.x
   [Configure Certificate Authority (CA) certificates for storage cluster](https://www.ibm.com/docs/en/scalecontainernative?topic=cluster-configuring-certificate-authority-ca-certificates).
   Note that the storage cluster verification can be skipped (e.g. for PoCs, demos) by setting *insecureSkipVerify* option to *true*, see 
   [Edit the *config.yaml* file to reflect your local environment](#step1). This is set as default in the Helm chart aimed at PoCs. Recommended setting is *false*. 
-* Clone [this](https://github.com/IBM/ibm-spectrum-scale-container-native-helm/tree/v5.1.1.4-v2.3.1) Github repository to your local installation node. 
+* Clone [this](https://github.com/IBM/ibm-spectrum-scale-container-native-helm/tree/v5.1.2.1-v2.4.0) Github repository to your local installation node. 
 * The **helm** (v3) command binary (or higher) needs to be installed on the local installation node, see [Installing Helm](https://helm.sh/docs/intro/install/) to apply the Helm charts.
 * A cluster-wide admin user (*cluster-admin* role) on OpenShift is required for the deployment. 
   The predefined `kube:admin` or `system:admin` accounts do suffice.
@@ -122,7 +122,7 @@ to install IBM Spectrum Scale CNSA with this Helm chart on Red Hat OpenShift 4.x
   See [Air gap setup for network restricted Red Hat OpenShift Container Platform clusters (optional)](https://www.ibm.com/docs/en/scalecontainernative?topic=odifccr-air-gap-setup-network-restricted-red-hat-openshift-container-platform-clusters)
   in case your OpenShift cluster does not allow access to external image registries. The Red Hat® OpenShift® internal image registry is no longer supported at this time. 
 * Ensure that ports 1191, 443, and the ephemeral port ranges are open so IBM Spectrum Scale CNSA can remotely mount the file system from the storage cluster.
-  See [Securing the IBM Spectrum Scale system using firewall](https://www.ibm.com/docs/en/spectrum-scale/5.1.1?topic=topics-securing-spectrum-scale-system-using-firewall) 
+  See [Securing the IBM Spectrum Scale system using firewall](https://www.ibm.com/docs/en/spectrum-scale/5.1.2?topic=topics-securing-spectrum-scale-system-using-firewall) 
   for more information.
 
 <a name="clusteradmin"></a>
@@ -132,10 +132,10 @@ other than the default admin users like `kube:admin` or `system:admin` which are
 and which, for example, do not provide a token (`oc whoami -t`) to access or push images to the internal OpenShift image registry.
 The steps to create such a regular OpenShift *cluster-admin* user include 
 1. Adding an *identity provider* like *HTPasswd* to the OpenShift cluster 
-(see [Configuring an HTPasswd identity provider](https://docs.openshift.com/container-platform/4.5/authentication/identity_providers/configuring-htpasswd-identity-provider.html))
+(see [Configuring an HTPasswd identity provider](https://docs.openshift.com/container-platform/4.9/authentication/identity_providers/configuring-htpasswd-identity-provider.html))
 and
 2. Creating a regular admin user account with a *cluster-admin* role with 
-(see [Creating a cluster admin](https://docs.openshift.com/container-platform/4.5/authentication/using-rbac.html#creating-cluster-admin_using-rbac))
+(see [Creating a cluster admin](https://docs.openshift.com/container-platform/4.9/authentication/using-rbac.html#creating-cluster-admin_using-rbac))
 ```
 # oc adm policy add-cluster-role-to-user cluster-admin <user-name>
 ```
@@ -145,7 +145,8 @@ and
 When cloning this repository you will find the following files in your local directory:
 ```
 README.md
-config.yaml           << one central configuration file with minimum required variables for the customer
+config.yaml           << one central configuration file with all customizable variables for the deployment (a copy of values.yaml)
+minimal-config.yaml   << one central configuration file with just a minimum set of required variables for the deployment
 helm/
  \-ibm-spectrum-scale
    |-Chart.yaml       << defines Helm chart version and provides additional info
@@ -164,18 +165,20 @@ examples/
  |- ibm-spectrum-scale-pvc.yaml        << persistent volume claim (PVC), depends on storage class created by ibm-spectrum-scale-sc.yaml
  |- ibm-spectrum-scale-test-pod.yaml   << test pod example, mounts PVC created by ibm-spectrum-scale-pvc.yaml
 ```
-The **config.yaml** file is a copy of the *values.yaml* and holds the customizable parameters for the 
-IBM Spectrum Scale CNSA deployment. It needs to be edited accordingly to reflect the local environment. 
+The **config.yaml** file is a copy of the *values.yaml* and holds all customizable parameters for the 
+IBM Spectrum Scale CNSA deployment. The **minimal-config.yaml** holds just a minimum set of required 
+variables for the deployment and can be extended with additional values from the [values.yaml](helm/ibm-spectrum-scale/values.yaml)
+as needed. Either one can be used and needs to be edited accordingly to reflect the local environment. 
 
 The Helm chart for the IBM Spectrum Scale CNSA and CSI driver deployment is located in the **helm/** directory 
 as **ibm-spectrum-scale**. The Helm charts consists of a default **values.yaml** file 
-that defines the available *parameters* and their *default values* which are used in the YAML templates. 
+that defines all the available *parameters* and their *default values* which are used in the YAML templates. 
 
 The **crds/** directory stores the unchanged official *custom resource definitions* (CRDs) 
 and *namespace* manifests for IBM Spectrum Scale CNSA/CSI which will not be templated by Helm. 
 
 The **Chart.yaml** file describes the general properties of the Helm chart such as the Helm chart name, the Helm chart *version* 
-and the *appVersion*. The *appVersion* is *v5.1.1.4* reflecting the IBM Spectrum Scale CNSA version v5.1.1.4.
+and the *appVersion*. The *appVersion* is *v5.1.2.1* reflecting the IBM Spectrum Scale CNSA version v5.1.2.1.
 
 The Helm chart is based on the original YAML manifests from the public IBM Github repository:
 - [IBM Spectrum Scale container native](https://github.com/IBM/ibm-spectrum-scale-container-native)
@@ -213,7 +216,7 @@ Create a local file *authority.json* with the entitled *user* **cp** and your **
 ```
 # cat authority.json 
 {
-  "auth": "< ENTER BASE64 ENCODED OUTPUT STRING OF (echo -n "cp:<YOUR ENTITLEMENT KEY>" | base64 -w0) HERE >",
+  "auth": "< ENTER YOUR BASE64 ENCODED OUTPUT STRING OF (echo -n "cp:<YOUR ENTITLEMENT KEY>" | base64 -w0) HERE >",
   "username":"cp",
   "password":"< ENTER YOUR ORIGINAL ENTITLEMENT KEY HERE >"
 }
@@ -226,7 +229,11 @@ An example *authority.json* file may look similar to
   "password":"eyJhbGc...KUnqLOvHrI"
 }
 ```
-with
+with your IBM entitlement key
+```
+eyJhbGc...KUnqLOvHrI
+```
+and the base64 encrypted output of
 ```
 # echo -n "cp:eyJhbGc...KUnqLOvHrI" | base64 -w0
 Y3A6ZXl...T3ZIckk=
@@ -281,8 +288,8 @@ Note: If you have already applied these *Machine Configurations* once then you d
 Apply the following *Machine Configuration* (use "x86" for x86_64, "ppc64le" for ppc64le or "s390x" for s390x platforms):
 ```
 ARCH="x86_64" (or "ppc64le" or "s390x")
-OCP="4.7" (or "4.8")
-# oc apply -f https://raw.githubusercontent.com/IBM/ibm-spectrum-scale-container-native/v5.1.1.4/generated/mco/ocp${OCP}/mco_${ARCH}.yaml
+OCP="4.7" (or "4.8" or "4.9")
+# oc apply -f https://raw.githubusercontent.com/IBM/ibm-spectrum-scale-container-native/v5.1.2.1/generated/mco/ocp${OCP}/mco_${ARCH}.yaml
 ```
 You can check the progress of the update with
 ```
@@ -455,7 +462,7 @@ Here we use the `-e 1` option in order to create a user with a never-expiring pa
 
 The deployment of the Helm chart for IBM Spectrum Scale CNSA with IBM Spectrum Scale CSI driver requires two steps:
 
-1. Edit the [*config.yaml*](config.yaml) file to reflect your local environment
+1. Edit the [*config.yaml*](config.yaml) (or [*minimal-config.yaml*](minimal-config.yaml)) file to reflect your local environment
 2. Install the IBM Spectrum Scale CNSA Helm chart: [helm/ibm-spectrum-scale](helm/ibm-spectrum-scale)
 
 The [*config.yaml*](config.yaml) file contains the configurable parameters that describe the local environment 
@@ -515,6 +522,9 @@ remoteCluster:
   gui:
     host:               "remote-scale-gui.mydomain.com"
 ```
+The [*minimal-config.yaml*](minimal-config.yaml) file in this repository provides an example of such a minimal *config.yaml* file
+that can be used and easily customized by adding additional variables from [*values.yaml*](helm/ibm-spectrum-scale/values.yaml) as needed.
+
 Note: 
 - The *localFs* name must comply with Kubernetes DNS label rules and, for example, cannot contain a "_", see 
   [DNS Label Names](https://www.ibm.com/links?url=https%3A%2F%2Fkubernetes.io%2Fdocs%2Fconcepts%2Foverview%2Fworking-with-objects%2Fnames%2F%23dns-label-names)).
@@ -627,7 +637,7 @@ to another image registry or need to work with different image versions. All con
 last section of the [*config.yaml*](config.yaml) file.
 ```
 # The following container images are used by IBM Spectrum Scale CNSA:
-cnsaVersion:      v5.1.1.4
+cnsaVersion:      v5.1.2.1
 cnsaImages:
   operator:       icr.io/cpopen/ibm-spectrum-scale-operator@sha256:[...]
   coreECE:        cp.icr.io/cp/spectrum/scale/erasure-code/ibm-spectrum-scale-daemon@sha256:[...]
@@ -641,8 +651,8 @@ cnsaImages:
   sysmon:         cp.icr.io/cp/spectrum/scale/ibm-spectrum-scale-monitor@sha256:[...]
   grafanaBridge:  cp.icr.io/cp/spectrum/scale/ibm-spectrum-scale-grafana-bridge@sha256:[...]
 
-# The following container images are used by IBM Spectrum Scale CSI Driver v2.3.1:
-csiVersion:       v2.3.1
+# The following container images are used by IBM Spectrum Scale CSI Driver v2.4.0:
+csiVersion:       v2.4.0
 csiImages:
   operator:       icr.io/cpopen/ibm-spectrum-scale-csi-operator@sha256:[...]
   driver:         cp.icr.io/cp/spectrum/scale/csi/ibm-spectrum-scale-csi-driver@sha256:[...]
@@ -651,6 +661,7 @@ csiImages:
   provisioner:    cp.icr.io/cp/spectrum/scale/csi/csi-provisioner@sha256:[...]
   livenessprobe:  cp.icr.io/cp/spectrum/scale/csi/livenessprobe@sha256:[...]
   nodeRegistrar:  cp.icr.io/cp/spectrum/scale/csi/csi-node-driver-registrar@sha256:[...]
+  resizer:        cp.icr.io/cp/spectrum/scale/csi/csi-resizer@sha256:[...]
 ```
 Note: The container image names are typically **NOT** supposed to be changed for a regular deployment!
 
@@ -977,7 +988,7 @@ require a proper clean-up first!
 
 To remove *IBM Spectrum Scale Container Native Storage Access* with *IBM Spectrum Scale CSI driver* please refer to the
 official IBM documentation at 
-[Cleaning up the container native cluster](https://www.ibm.com/docs/en/scalecontainernative?topic=5114-cleaning-up-container-native-cluster)
+[Cleaning up the container native cluster](https://www.ibm.com/docs/en/scalecontainernative?topic=5121-cleaning-up-container-native-cluster)
 
 When completely uninstalling the IBM Spectrum Scale CNSA and CSI driver deployment make sure that all applications 
 using persistent storage provided by IBM Spectrum Scale are stopped and verify that all related SC, PVC and PV objects are removed.

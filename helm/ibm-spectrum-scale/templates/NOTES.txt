@@ -28,7 +28,7 @@ This Helm chart is only intended to provide ease of use for an initial deploymen
 "helm upgrade|rollback|uninstall" features are not supported.
 
 To remove IBM Spectrum Scale Container Native Storage Access please follow the instructions at:
-https://www.ibm.com/docs/en/scalecontainernative?topic=5114-cleaning-up-container-native-cluster
+https://www.ibm.com/docs/en/scalecontainernative?topic=5121-cleaning-up-container-native-cluster
 
 Complete removal of the IBM Spectrum Scale CNSA and CSI Helm chart deployment involves the following steps on OpenShift: 
 # oc delete deployment ibm-spectrum-scale-controller-manager -n ibm-spectrum-scale-operator

@@ -1,0 +1,30 @@
+# ------------------------------------------------------------------
+# Minimal set of Helm chart values for the deployment of CNSA/CSI
+# ------------------------------------------------------------------
+# CLUSTERNAME: ocp4
+# ------------------------------------------------------------------
+
+## Create secrets with CNSA/CSI user credentials for IBM Spectrum Scale GUI
+createSecrets: true
+cnsaGuiUser:
+  username: "cnsa_admin"
+  password: "cnsa_PASSWORD"
+csiGuiUser:
+  username: "csi_admin"
+  password: "csi_PASSWORD"
+
+## Configure IBM Spectrum Scale CNSA: Cluster CR
+license:
+    accept: true
+    license: data-access
+
+## Configure IBM Spectrum Scale CNSA: Primary Filesystem CR / RemoteCluster CR
+primaryFilesystem:
+  localFs:          "fs1"
+  remoteFs:         "essfs1"
+remoteCluster:
+  gui:
+    host:           "remote-scale-gui.mydomain.com"
+    insecureSkipVerify: true
+
+## Add further variables as needed from helm/ibm-spectrum-scale/values.yaml

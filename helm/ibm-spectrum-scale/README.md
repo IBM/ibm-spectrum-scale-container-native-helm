@@ -3,8 +3,8 @@
 ## ABSTRACT
 
 This Helm chart deploys
-- IBM Spectrum Scale Container Native Storage Access v5.1.1.4
-- IBM Spectrum Scale CSI Driver v2.3.1
+- IBM Spectrum Scale Container Native Storage Access v5.1.2.1
+- IBM Spectrum Scale CSI Driver v2.4.0
 
 This Helm chart is only intended to provide ease of use for an 
 initial deployment for Proof of Concepts (PoCs), demos or any other
@@ -41,9 +41,9 @@ certain mandatory planning and preparation steps.
 
 Please see:
 - [Helm Chart Deployment of IBM Spectrum Scale CNSA/CSI](https://github.com/IBM/ibm-spectrum-scale-container-native-helm/blob/main/INSTALL.md#preinstallation-tasks)
-- [IBM Spectrum Scale Container Native - Planning](https://www.ibm.com/docs/en/scalecontainernative?topic=5114-planning)
-- [IBM Spectrum Scale Container Native - Installation prerequisites](https://www.ibm.com/docs/en/scalecontainernative?topic=5114-installation-prerequisites)
-- [Installing the IBM Spectrum Scale container native operator and cluster](https://www.ibm.com/docs/en/scalecontainernative?topic=5114-installing-spectrum-scale-container-native-operator-cluster)
+- [IBM Spectrum Scale Container Native - Planning](https://www.ibm.com/docs/en/scalecontainernative?topic=5121-planning)
+- [IBM Spectrum Scale Container Native - Installation prerequisites](https://www.ibm.com/docs/en/scalecontainernative?topic=5121-installation-prerequisites)
+- [Installing the IBM Spectrum Scale container native operator and cluster](https://www.ibm.com/docs/en/scalecontainernative?topic=5121-installing-spectrum-scale-container-native-operator-cluster)
 
 ## NAMESPACES
 
@@ -161,7 +161,7 @@ require a proper clean-up first!
 
 To remove *IBM Spectrum Scale Container Native Storage Access* with *IBM Spectrum Scale CSI driver* 
 please refer to the official IBM documentation at 
-[Cleaning up the container native cluster](https://www.ibm.com/docs/en/scalecontainernative?topic=5114-cleaning-up-container-native-cluster)
+[Cleaning up the container native cluster](https://www.ibm.com/docs/en/scalecontainernative?topic=5121-cleaning-up-container-native-cluster)
 
 The complete removal of the IBM Spectrum Scale CNSA & CSI requires some distinctive steps.
 

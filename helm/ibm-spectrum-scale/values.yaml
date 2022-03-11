@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------
 # Default Helm chart values for the deployment of
-#  - IBM Spectrum Scale Container Native Storage Access v5.1.1.4
-#  - IBM Spectrum Scale CSI Driver v2.3.1
+#  - IBM Spectrum Scale Container Native Storage Access v5.1.2.1
+#  - IBM Spectrum Scale CSI Driver v2.4.0
 # ------------------------------------------------------------------
 # NOTE: With the default configuration IBM Spectrum Scale services 
 #       will be deployed on all OpenShift worker nodes. You can add 
@@ -211,7 +211,7 @@ encryptionConfig:
 ## https://www.ibm.com/docs/en/scalecontainernative?topic=planning-container-image-list-spectrum-scale-container-native
 
 # The following container images are used by IBM Spectrum Scale CNSA:
-cnsaVersion:      v5.1.1.4
+cnsaVersion:      v5.1.2.1
 cnsaImages:
   operator: icr.io/cpopen/ibm-spectrum-scale-operator@sha256:e986a2664fa450c8b1ef028deb5fc8a27662802fc2cd804211cdd5184c50486b
   coreECE: cp.icr.io/cp/spectrum/scale/erasure-code/ibm-spectrum-scale-daemon@sha256:0380df0500d584cf65f566f22279307d52cc42a9e9d990e40f8c7b17115cedf8
@@ -230,8 +230,8 @@ cnsaImages:
 ## -------------------------------------------
 ## https://www.ibm.com/docs/en/scalecontainernative?topic=planning-container-image-list-spectrum-scale-container-native
 
-# The following container images are used by IBM Spectrum Scale CSI Driver v2.3.1:
-csiVersion:       v2.3.1
+# The following container images are used by IBM Spectrum Scale CSI Driver v2.4.0:
+csiVersion:       v2.4.0
 csiImages:
   operator:       icr.io/cpopen/ibm-spectrum-scale-csi-operator@sha256:38751e2b7a4624e588747ed427c2c2146bee320bab74b0bb288f38c2c5d2bddd
   driver:         cp.icr.io/cp/spectrum/scale/csi/ibm-spectrum-scale-csi-driver@sha256:4d8c41138f2fddac351f82db19c32fe5ad1282e7886f78fe2669f0c30ea5badb

@@ -522,9 +522,6 @@ remoteCluster:
   gui:
     host:               "remote-scale-gui.mydomain.com"
 ```
-The [*minimal-config.yaml*](minimal-config.yaml) file in this repository provides an example of such a minimal *config.yaml* file
-that can be used and easily customized by adding additional variables from [*values.yaml*](helm/ibm-spectrum-scale/values.yaml) as needed.
-
 Note: 
 - The *localFs* name must comply with Kubernetes DNS label rules and, for example, cannot contain a "_", see 
   [DNS Label Names](https://www.ibm.com/links?url=https%3A%2F%2Fkubernetes.io%2Fdocs%2Fconcepts%2Foverview%2Fworking-with-objects%2Fnames%2F%23dns-label-names)).
@@ -534,16 +531,57 @@ Note:
   ```
   # curl -k -u 'cnsa_admin:cnsa_PASSWORD' https://<remote storage cluster GUI host>:443/scalemgmt/v2/filesystems
   ```
+Such a minimal **config.yaml** file could look as follows 
+```
+## Create secrets with CNSA/CSI user credentials for IBM Spectrum Scale GUI
+createSecrets: true
+cnsaGuiUser:
+  username: "cnsa_admin"
+  password: "cnsa_PASSWORD"
+csiGuiUser:
+  username: "csi_admin"
+  password: "csi_PASSWORD"
+
+## Configure IBM Spectrum Scale CNSA: Cluster CR
+license:
+    accept: true
+    license: data-access
+
+## Configure IBM Spectrum Scale CNSA: Primary Filesystem CR / RemoteCluster CR
+primaryFilesystem:
+  localFs:          "fs1"
+  remoteFs:         "essfs1"
+remoteCluster:
+  gui:
+    host:           "remote-scale-gui.mydomain.com"
+    insecureSkipVerify: true
+```
+The [*minimal-config.yaml*](minimal-config.yaml) file in this repository provides an example of such a minimal *config.yaml* file
+that can be used and easily customized by adding additional variables as needed from [*values.yaml*](helm/ibm-spectrum-scale/values.yaml).
 
 This minimum configuration will automatically create the *secrets* for the CNSA/CSI GUI users 
-(`cnsa-remote-gui-secret`, `csi-remote-gui-secret`) 
-in their respective namespaces (CNSA: `ibm-spectrum-scale`, CSI: `ibm-spectrum-scale-csi`), 
+(`cnsa-remote-gui-secret`, `csi-remote-gui-secret`) in their respective namespaces (CNSA: `ibm-spectrum-scale`, CSI: `ibm-spectrum-scale-csi`), 
 create a *RemoteCluster CR* with name `primary-storage-cluster` and deploy IBM Spectrum Scale CNSA with the CSI driver on 
-all OpenShift worker nodes with the default CNSA *nodeSelector* `node-role.kubernetes.io/worker: ""`. 
+all OpenShift worker nodes with the default CNSA *nodeSelector* `node-role.kubernetes.io/worker: ""`.
 
+For example: If you want to customize the deployment further by deploying CNSA/CSI on selected worker nodes only, 
+just label the worker nodes accordingly (e.g. run `oc label node [worker node name] run-ibm-spectrum-scale="enabled" --overwrite`) 
+and add the node selector to your customized [*minimal-config.yaml*](minimal-config.yaml) file:
+```
+[...]
+## Configure IBM Spectrum Scale CNSA: Cluster CR
+license:
+    accept: true
+    license: data-access
+daemon:
+  nodeSelector:
+    node-role.kubernetes.io/worker: ""
+    run-ibm-spectrum-scale: "enabled"
+[...]
+```
 Further settings can be configured as needed to customize the deployment. These settings are listed and
 and described in the [config.yaml](config.yaml) or [values.yaml](helm/ibm-spectrum-scale/values.yaml) file
-with references to the official documentation. 
+with references to the official IBM documentation. 
 
 If these settings meet your needs you can directly move on to 
 [(STEP 2) Deploy the IBM Spectrum Scale CNSA Helm chart](#step2) section.

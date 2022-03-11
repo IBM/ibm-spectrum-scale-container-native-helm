@@ -19,7 +19,7 @@ spec:
       annotations:
         productID: ibm-spectrum-scale-csi-operator
         productName: IBM Spectrum Scale CSI Operator
-        productVersion: 2.3.0
+        productVersion: 2.4.0
       labels:
         app.kubernetes.io/instance: ibm-spectrum-scale-csi-operator
         app.kubernetes.io/managed-by: ibm-spectrum-scale-csi-operator
@@ -33,7 +33,7 @@ spec:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
             - matchExpressions:
-              - key: beta.kubernetes.io/arch
+              - key: kubernetes.io/arch
                 operator: Exists
       containers:
       - args:
@@ -64,8 +64,10 @@ spec:
         - name: CSI_LIVENESSPROBE_IMAGE
           value: {{ .Values.csiImages.livenessprobe }}
         - name: CSI_NODE_REGISTRAR_IMAGE
-          value:  {{ .Values.csiImages.nodeRegistrar }}
-        image:  {{ .Values.csiImages.operator }}
+          value: {{ .Values.csiImages.nodeRegistrar }}
+        - name: CSI_RESIZER_IMAGE
+          value: {{ .Values.csiImages.resizer }}
+        image: {{ .Values.csiImages.operator }}
         imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:
@@ -82,10 +84,12 @@ spec:
           periodSeconds: 1
         resources:
           limits:
-            cpu: 500m
-            memory: 500Mi
+            cpu: 600m
+            ephemeral-storage: 5Gi
+            memory: 600Mi
           requests:
             cpu: 50m
+            ephemeral-storage: 5Gi
             memory: 50Mi
         securityContext:
           allowPrivilegeEscalation: false

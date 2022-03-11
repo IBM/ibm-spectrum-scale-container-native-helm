@@ -213,7 +213,7 @@ encryptionConfig:
 # The following container images are used by IBM Spectrum Scale CNSA:
 cnsaVersion:      v5.1.1.4
 cnsaImages:
-  operator:       icr.io/cpopen/ibm-spectrum-scale-operator@sha256:90abc5815743e2ed306907f33a002467d021fd0883a1ae7e0e9b4992871e4a0e
+  operator: icr.io/cpopen/ibm-spectrum-scale-operator@sha256:e986a2664fa450c8b1ef028deb5fc8a27662802fc2cd804211cdd5184c50486b
   coreECE: cp.icr.io/cp/spectrum/scale/erasure-code/ibm-spectrum-scale-daemon@sha256:0380df0500d584cf65f566f22279307d52cc42a9e9d990e40f8c7b17115cedf8
   coreDME: cp.icr.io/cp/spectrum/scale/data-management/ibm-spectrum-scale-daemon@sha256:6d477c4115ab84777f199e0dd2cf4ba40bd3825d903498667de414b890b66bff
   coreDAE: cp.icr.io/cp/spectrum/scale/data-access/ibm-spectrum-scale-daemon@sha256:27d65e1edeaa656ea091f410d673ca8af2701375d254b181a726c63c96141e5b

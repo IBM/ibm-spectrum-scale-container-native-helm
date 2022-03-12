@@ -156,6 +156,7 @@ helm/
    |-crds/            << holds the custom resource definitions (CRD) and namespaces for the IBM Spectrum Scale CNSA/CSI deployment
    |-templates/       << holds the templates of the YAML manifests for the IBM Spectrum Scale CNSA/CSI deployment
 scripts/
+ |- add_icr_secret.sh << script to add IBM Cloud Container Registry Entitlement to OpenShift global pull secrets
  |- upload_images.sh  << script to upload local IBM Spectrum Scale CNSA v5.1.0.x images (from tar archive) to the OpenShift internal image registry
  |- yaml-split.awk    << awk helper script to split the original CNSA YAMLs into individual YAMLs
  |- yaml-rename.sh    << helper script to rename the individual files created by yaml-split.awk based on "kind:" and "name:"

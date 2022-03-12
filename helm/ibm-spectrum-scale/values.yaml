@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------
 # Default Helm chart values for the deployment of
-#  - IBM Spectrum Scale Container Native Storage Access v5.1.1.4
-#  - IBM Spectrum Scale CSI Driver v2.3.1
+#  - IBM Spectrum Scale Container Native Storage Access v5.1.2.1
+#  - IBM Spectrum Scale CSI Driver v2.4.0
 # ------------------------------------------------------------------
 # NOTE: With the default configuration IBM Spectrum Scale services 
 #       will be deployed on all OpenShift worker nodes. You can add 
@@ -211,32 +211,33 @@ encryptionConfig:
 ## https://www.ibm.com/docs/en/scalecontainernative?topic=planning-container-image-list-spectrum-scale-container-native
 
 # The following container images are used by IBM Spectrum Scale CNSA:
-cnsaVersion:      v5.1.1.4
+cnsaVersion:      v5.1.2.1
 cnsaImages:
-  operator:       icr.io/cpopen/ibm-spectrum-scale-operator@sha256:90abc5815743e2ed306907f33a002467d021fd0883a1ae7e0e9b4992871e4a0e
-  coreECE:        cp.icr.io/cp/spectrum/scale/erasure-code/ibm-spectrum-scale-daemon@sha256:5a944cf511a62d7b10dff0c9a24ec9a9176fde3e7eebeea03cc7a030a827ecbd
-  coreDME:        cp.icr.io/cp/spectrum/scale/data-management/ibm-spectrum-scale-daemon@sha256:899071be791fc5fae3c5a7e2c81fa4e05d96411eb6c1152722c4d2b655cbee43
-  coreDAE:        cp.icr.io/cp/spectrum/scale/data-access/ibm-spectrum-scale-daemon@sha256:39a7177723b3856406e5ecb4158c89a9b84a5113ffc51a6d296f5052b6ceb824
-  coreInit:       cp.icr.io/cp/spectrum/scale/ibm-spectrum-scale-core-init@sha256:3a0efb40dcd614a5b19d0c8b23a5874ce6be1d2d7e56f4908eae28c1b9459b33
-  gui:            cp.icr.io/cp/spectrum/scale/ibm-spectrum-scale-gui@sha256:90a556ed3e13926d60e9e140903a3c2e4fe9463e4806833c12f9eff2dba4ae93
-  postgres:       cp.icr.io/cp/spectrum/scale/postgres@sha256:a2da8071b8eba341c08577b13b41527eab3968bf1c8d28123b5b07a493a26862
-  logs:           cp.icr.io/cp/spectrum/scale/ubi-minimal@sha256:d9b92ea78e76300968f5c9a4a04c2cf220a0bbfac667f77e5e7287692163d898
-  pmcollector:    cp.icr.io/cp/spectrum/scale/ibm-spectrum-scale-pmcollector@sha256:f08ce0f44418e1b370b1a3b10f0ce2ac116368f2621baea02f4bf5e90ce40b5d
-  sysmon:         cp.icr.io/cp/spectrum/scale/ibm-spectrum-scale-monitor@sha256:57a689b54f992c90b3ce2ef19b02b08f92c5c9d05f8cdcf136c99b692dfa13e4
-  grafanaBridge:  cp.icr.io/cp/spectrum/scale/ibm-spectrum-scale-grafana-bridge@sha256:9982f997294ee5b498c8b962bb0007d019932c104dd4a6941b44a3cce5ca27aa
+  operator: icr.io/cpopen/ibm-spectrum-scale-operator@sha256:e986a2664fa450c8b1ef028deb5fc8a27662802fc2cd804211cdd5184c50486b
+  coreECE: cp.icr.io/cp/spectrum/scale/erasure-code/ibm-spectrum-scale-daemon@sha256:0380df0500d584cf65f566f22279307d52cc42a9e9d990e40f8c7b17115cedf8
+  coreDME: cp.icr.io/cp/spectrum/scale/data-management/ibm-spectrum-scale-daemon@sha256:6d477c4115ab84777f199e0dd2cf4ba40bd3825d903498667de414b890b66bff
+  coreDAE: cp.icr.io/cp/spectrum/scale/data-access/ibm-spectrum-scale-daemon@sha256:27d65e1edeaa656ea091f410d673ca8af2701375d254b181a726c63c96141e5b
+  coreInit: cp.icr.io/cp/spectrum/scale/ibm-spectrum-scale-core-init@sha256:1d1f2e1d2c035d1c58aac20961071c8cd011852acfaf977928f0de2ee536279c
+  gui: cp.icr.io/cp/spectrum/scale/ibm-spectrum-scale-gui@sha256:8f6a4df6f3906ddac08d25dec206a4f89ac6a8d5529518013a7301132241f7c2
+  postgres: cp.icr.io/cp/spectrum/scale/postgres@sha256:a2da8071b8eba341c08577b13b41527eab3968bf1c8d28123b5b07a493a26862
+  logs: cp.icr.io/cp/spectrum/scale/ubi-minimal@sha256:d9b92ea78e76300968f5c9a4a04c2cf220a0bbfac667f77e5e7287692163d898
+  pmcollector: cp.icr.io/cp/spectrum/scale/ibm-spectrum-scale-pmcollector@sha256:9f21c31541a1e85c7f9eae2a695b19c57b85a7731286a277f9cd5184e8c87323
+  sysmon: cp.icr.io/cp/spectrum/scale/ibm-spectrum-scale-monitor@sha256:48a1bebb89804c11593d3577107bedba1a6a40157298d81bfef4983c9744a9b6
+  grafanaBridge: cp.icr.io/cp/spectrum/scale/ibm-spectrum-scale-grafana-bridge@sha256:a0bfc1ef649070fdee0ad23746e4f3c438d6798d7c3148ead7149496110e1801
 
 ## -------------------------------------------
 ##  IBM Spectrum Scale CSI: Container Images
 ## -------------------------------------------
 ## https://www.ibm.com/docs/en/scalecontainernative?topic=planning-container-image-list-spectrum-scale-container-native
 
-# The following container images are used by IBM Spectrum Scale CSI Driver v2.3.1:
-csiVersion:       v2.3.1
+# The following container images are used by IBM Spectrum Scale CSI Driver v2.4.0:
+csiVersion:       v2.4.0
 csiImages:
-  operator:       icr.io/cpopen/ibm-spectrum-scale-csi-operator@sha256:4800e1ee33d575cc653d5c69f3c387f0cca10ae71f33930d3a9c7d3341d7728d
-  driver:         cp.icr.io/cp/spectrum/scale/csi/ibm-spectrum-scale-csi-driver@sha256:a841871354acdd2e0137e2f05b64e5ceb2aa73f62a666aaeff7fe15171092a36
-  snapshotter:    cp.icr.io/cp/spectrum/scale/csi/csi-snapshotter@sha256:ed98431376c9e944e19a465fe8ea944806714dd95416a0821096c78d66b579bd
-  attacher:       cp.icr.io/cp/spectrum/scale/csi/csi-attacher@sha256:60ab9b3e6a030d3038c87c0d6bca2930f58d1d72823e6a4af09767dc83b696a2
-  provisioner:    cp.icr.io/cp/spectrum/scale/csi/csi-provisioner@sha256:04c55b93a032ad8075cae540d60fc740a72c31006590dbdb61ad4ab9813959d0
-  livenessprobe:  cp.icr.io/cp/spectrum/scale/csi/livenessprobe@sha256:1b7c978a792a8fa4e96244e8059bd71bb49b07e2e5a897fb0c867bdc6db20d5d
-  nodeRegistrar:  cp.icr.io/cp/spectrum/scale/csi/csi-node-driver-registrar@sha256:2dee3fe5fe861bb66c3a4ac51114f3447a4cd35870e0f2e2b558c7a400d89589
+  operator:       icr.io/cpopen/ibm-spectrum-scale-csi-operator@sha256:38751e2b7a4624e588747ed427c2c2146bee320bab74b0bb288f38c2c5d2bddd
+  driver:         cp.icr.io/cp/spectrum/scale/csi/ibm-spectrum-scale-csi-driver@sha256:4d8c41138f2fddac351f82db19c32fe5ad1282e7886f78fe2669f0c30ea5badb
+  snapshotter:    cp.icr.io/cp/spectrum/scale/csi/csi-snapshotter@sha256:818f35653f2e214db81d655063e81995de9073328a3430498624c140881026a3
+  attacher:       cp.icr.io/cp/spectrum/scale/csi/csi-attacher@sha256:80dec81b679a733fda448be92a2331150d99095947d04003ecff3dbd7f2a476a
+  provisioner:    cp.icr.io/cp/spectrum/scale/csi/csi-provisioner@sha256:6477988532358148d2e98f7c747db4e9250bbc7ad2664bf666348abf9ee1f5aa
+  livenessprobe:  cp.icr.io/cp/spectrum/scale/csi/livenessprobe@sha256:529be2c9770add0cdd0c989115222ea9fc1be430c11095eb9f6dafcf98a36e2b
+  nodeRegistrar:  cp.icr.io/cp/spectrum/scale/csi/csi-node-driver-registrar@sha256:f9bcee63734b7b01555ee8fc8fb01ac2922478b2c8934bf8d468dd2916edc405
+  resizer:        cp.icr.io/cp/spectrum/scale/csi/csi-resizer@sha256:6e0546563b18872b0aa0cad7255a26bb9a87cb879b7fc3e2383c867ef4f706fb

@@ -26,8 +26,8 @@ and/or with specifying just the required configuration parameters directly on th
 ## Helm chart for IBM Spectrum Scale Container Native
 
 This repository provides a sample *Helm chart* for the deployment of
-- [*IBM Spectrum Scale Container Native Storage Access* (CNSA) v5.1.1.4](https://www.ibm.com/docs/en/scalecontainernative?topic=spectrum-scale-container-native-storage-access-5114) with 
-- [*IBM Spectrum Scale CSI driver* v2.3.1](https://www.ibm.com/docs/en/spectrum-scale-csi?topic=spectrum-scale-container-storage-interface-driver-231) 
+- [*IBM Spectrum Scale Container Native Storage Access* (CNSA) v5.1.2.1](https://www.ibm.com/docs/en/scalecontainernative?topic=spectrum-scale-container-native-storage-access-5121) with 
+- [*IBM Spectrum Scale CSI driver* v2.4.0](https://www.ibm.com/docs/en/spectrum-scale-csi?topic=spectrum-scale-container-storage-interface-driver-240) 
 
 using a *single* configuration file ([*config.yaml*](config.yaml) - a copy of [values.yaml](helm/ibm-specrum-scale/values.yaml)) separated from the YAML manifests. 
 
@@ -122,6 +122,8 @@ risks associated with Your exercise of permissions under this License.
 The *main* branch in this Github repository will carry tags to refer to different releases of these Helm charts for the 
 combined deployment of specific *IBM Spectrum Scale CNSA* and *IBM Spectrum Scale CSI driver* releases.
 
+- Tag v5.1.2.1-v2.4.0:<br>
+  Helm chart for IBM Spectrum Scale CNSA v5.1.2.1 with IBM Spectrum Scale CSI driver v2.4.0 (w/hooks to check proper GUI access)
 - Tag v5.1.1.4-v2.3.1:<br>
   Helm chart for IBM Spectrum Scale CNSA v5.1.1.4 with IBM Spectrum Scale CSI driver v2.3.1 (w/hooks to check proper GUI access)
 - Tag v5.1.1.1-v2.2.0-up1:<br>

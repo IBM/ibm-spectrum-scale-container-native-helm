@@ -8,9 +8,7 @@
 ###  G.Schmidt                                               2021-04-12
 ### -------------------------------------------------------------------
 
-###
 ### VARIABLES
-###
 
 CNSA_IMAGES="ibm-spectrum-scale-core ibm-spectrum-scale-core-operator ibm-spectrum-scale-gui ibm-spectrum-scale-monitor ibm-spectrum-scale-pmcollector"
 CNSA_TAG="v5.1.0.3"
@@ -20,9 +18,7 @@ IMAGE_PATH="."
 REGISTRY_USER=""
 REGISTRY_TOKEN=""
 
-###
 ### FUNCTIONS
-###
 
 # Print a message and exit
 function err_exit()
@@ -42,9 +38,7 @@ function get_confirmation()
   return 0
 }
 
-##
 ## CHECK PREREQUISITES
-##
 
 # CHECK IF PODMAN IS AVAILABLE
 if ! which podman >/dev/null 2>&1
@@ -77,9 +71,7 @@ do
   [ -f "$FILE" ] || err_exit "CNSA image file $FILE not found!"
 done
 
-##
 ## MAIN
-##
 
 echo "------------------------------------------------------------------------------------------------------------"
 echo "### UPLOADING IBM Spectrum Scale Container Native Storage Access $CNSA_TAG images ### $(date) ###"

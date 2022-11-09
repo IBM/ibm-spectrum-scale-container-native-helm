@@ -105,7 +105,7 @@ For detailed instructions of the whole deployment including the required pre-ins
 
 Watch the video to see the Helm chart deployment in action:
 
-[![Watch the video](pics/Helm-WatchTheVideo-Icon.png)](https://ibm.box.com/v/cnsa-helm-chart-deployment)
+[![Watch the video](pics/Helm-WatchTheVideo-Icon.png)](https://youtu.be/TwZ_Yc_wDcM)
 
 ## Disclaimer
 

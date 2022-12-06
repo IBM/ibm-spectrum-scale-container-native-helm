@@ -1,6 +1,6 @@
 #! /usr/bin/gawk -f
 # --------------------------------------------------------------------
-#  yaml-split.awk V1.0   Author: Gero Schmidt              2021-10-28
+#  yaml-split.awk V1.0   Author: Gero Schmidt              2022-12-06
 # --------------------------------------------------------------------
 #  Splits concatenated YAML files into individual files 
 # --------------------------------------------------------------------
@@ -20,7 +20,7 @@
 BEGIN { fname="file"; filecnt=1; j=0; file=sprintf("%s-%d",fname,filecnt); }
 
 {
-  if ($1=="---") 
+  if (substr($0,1,3)=="---" || filecnt==1) 
   {
     filecnt++; 
     file=sprintf("%s-%d",fname,filecnt); 

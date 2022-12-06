@@ -84,7 +84,7 @@ then
   echo "## Will be adding your IBM Cloud Container Registry (ICR) entitlement as follows:"
   grep -A3 "cp.icr.io" $TEMP_FILE2
   echo "##"
-  read -p "## Enter yes to continue and apply the ICR entitlement to the target OpenShift cluster shown above (leave empty to quit): "  MYANSWER2
+  read -p "## Enter >>yes<< to continue and apply the ICR entitlement to the target OpenShift cluster shown above (leave empty to quit): "  MYANSWER2
   echo
   if [[ "$MYANSWER2" != "yes" ]]
   then
